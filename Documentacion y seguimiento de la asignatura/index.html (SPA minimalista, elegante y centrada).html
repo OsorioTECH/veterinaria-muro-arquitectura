@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentación del Proyecto · Entregas</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #0f152b;
+      --card: #121a34;
+      --text: #e6eefc;
+      --muted: #a9b4cc;
+      --primary: #7aa2ff;
+      --accent: #22d3ee;
+      --border: #1f2a48;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .25);
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: Inter, "SF Pro Text", "Segoe UI", Roboto, Arial, Helvetica, sans-serif;
+      --maxw: 960px;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: radial-gradient(1200px 800px at 20% -10%, #16224a, transparent 50%), radial-gradient(800px 600px at 100% 0%, #1a2c5e, transparent 40%), var(--bg);
+      color: var(--text);
+    }
+
+    /* CONTENEDOR */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    header.top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      box-shadow: var(--shadow);
+    }
+
+    .title {
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: .2px
+    }
+
+    .subtitle {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 14px
+    }
+
+    /* NAV BREADCRUMB */
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .breadcrumbs a {
+      color: var(--primary);
+      text-decoration: none
+    }
+
+    .breadcrumbs .sep {
+      opacity: .5
+    }
+
+    /* BOTONES */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #1a2447, #121a34);
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .06s ease, box-shadow .12s ease, border-color .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+      border-color: #33509a
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg, #2a3f7e, #1a2b5a);
+      border-color: #2a4fb8
+    }
+
+    .btn.ghost {
+      background: transparent
+    }
+
+    .btn.small {
+      height: 36px;
+      padding: 0 12px;
+      font-size: 14px
+    }
+
+    /* TARJETAS Y LAYOUT */
+    .hero {
+      display: grid;
+      gap: 18px;
+      margin: 10px 0 24px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px
+    }
+
+    @media (min-width: 900px) {
+      .grid.cols-2 {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .grid.cols-3 {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .grid.cols-4 {
+        grid-template-columns: repeat(4, 1fr)
+      }
+    }
+
+    .card {
+      background: linear-gradient(180deg, #111936, #0f1731);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: transform .08s ease, box-shadow .12s ease, border-color .2s;
+      text-decoration: none;
+      color: var(--text);
+      display: block;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: #2f4da2
+    }
+
+    .card h3 {
+      margin: 0 0 8px
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(122, 162, 255, .12);
+      border: 1px solid #314c96;
+      color: var(--primary)
+    }
+
+    /* VISTAS */
+    section.view {
+      display: none;
+      animation: fade .18s ease
+    }
+
+    section.view.active {
+      display: block
+    }
+
+    @keyframes fade {
+      from {
+        opacity: .0;
+        transform: translateY(6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* LECTURA CENTRADA */
+    .reader {
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    .reader h2 {
+      margin: 0 0 12px;
+      font-size: 28px
+    }
+
+    .block {
+      background: #0f1732;
+      border: 1px solid var(--border);
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px
+    }
+
+    .code {
+      font-family: var(--mono);
+      background: #0b1226;
+      color: #d8e6ff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 13px;
+      border: 1px solid #16244a;
+    }
+
+    .diagram {
+      background: #0b1226;
+      color: #e3f2fd;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: var(--mono);
+      white-space: pre;
+      overflow: auto;
+      font-size: 13px;
+      border: 1px solid #16244a;
+    }
+
+    .def {
+      background: #111a38;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin: 8px 0;
+      font-size: 14px;
+      color: var(--text)
+    }
+
+    /* NAV DE SECCIONES DENTRO DE UNA ENTREGA */
+    .section-grid .card h4 {
+      margin: 0 0 6px
+    }
+
+    .section-grid p {
+      margin: 0 0 8px;
+      color: var(--muted)
+    }
+
+    /* FOOT */
+    footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const views = document.querySelectorAll('section.view');
+      const route = (id) => {
+        views.forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(id) || document.getElementById('home');
+        target.classList.add('active');
+        history.replaceState(null, '', '#' + id);
+      };
+      document.body.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-route]');
+        if (a) {
+          e.preventDefault();
+          route(a.getAttribute('data-route'));
+        }
+      });
+      const initial = location.hash?.replace('#', '') || 'home';
+      route(initial);
+    });
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1 class="title">Documentación del Proyecto</h1>
+          <p class="subtitle">Veterinaria Muro</p>
+        </div>
+      </div>
+      <nav class="breadcrumbs">
+        <a href="#" data-route="home">Inicio</a>
+        <span class="sep">/</span>
+        <span id="crumb-context" class="muted">Dashboard</span>
+      </nav>
+    </header>
+
+    <!-- HOME: Panel de entregas -->
+    <section id="home" class="view active">
+      <div class="grid cols-4">
+        <a class="card" href="#" data-route="e1">
+          <h3>Entrega 1</h3>
+          <p class="muted">Arquitectura por Capas.</p>
+        </a>
+        <a class="card" href="#" data-route="e2">
+          <h3>Entrega 2</h3>
+          <p class="muted">Patrones de diseño.</p>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Dashboard de secciones -->
+    <section id="e1" class="view">
+      <div class="hero panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h2 style="margin:0">Entrega 1 · Arquitectura por Capas</h2>
+            <p class="muted" style="margin:6px 0 0">Selecciona una sección para abrirla en vista de lectura.</p>
+          </div>
+          <a class="btn" href="#" data-route="home">Volver al Inicio</a>
+        </div>
+      </div>
+      <div class="grid section-grid cols-3">
+        <a class="card" href="#" data-route="e1-vision">
+          <h4>1. Visión y Stack</h4>
+          <p>Resumen del objetivo y tecnologías.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-capas">
+          <h4>2. Arquitectura por Capas</h4>
+          <p>Separación Presentación, Aplicación, Dominio, Infraestructura.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-dominio">
+          <h4>3. Entidades de Dominio</h4>
+          <p>Modelos, value objects, reglas.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-persistencia">
+          <h4>4. Persistencia y BD</h4>
+          <p>PostgreSQL, H2, migraciones.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-repos">
+          <h4>5. Repositorios</h4>
+          <p>Puertos y adaptadores.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-presentacion">
+          <h4>6. Presentación (API)</h4>
+          <p>REST, DTOs, validación.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-estructura">
+          <h4>7. Estructura del Proyecto</h4>
+          <p>Árbol de carpetas y ejemplo clave.</p>
+        </a>
+        <a class="card" href="#" data-route="adrs">
+          <h4>8. Decisiones (ADRs)</h4>
+          <p>Qué, por qué y consecuencias.</p>
+        </a>
+        <a class="card" href="#" data-route="e1-calidad">
+          <h4>9. Calidad y Seguridad</h4>
+          <p>Rendimiento, seguridad, mantenimiento.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Vistas de lectura centrada (contenido intacto) -->
+    <section id="e1-vision" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>1. Visión y selección tecnológica</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Se construirá una aplicación web para la clínica veterinaria: registrar clientes, mascotas, citas,
+            servicios,
+            exámenes y facturas. La idea es que sea muy rápida, segura, fácil de mantener y que podamos desarrollarla
+            sin
+            enredarnos con demasiada programación innecesaria.</p>
+          <div class="grid cols-2">
+            <div class="block">
+              <h3>Stack elegido</h3>
+              <ul>
+                <li><span class="pill">Backend</span> Java 17 + Spring Boot 3.x
+                  <div class="def"><strong>Qué es:</strong> “Spring Boot” ahorra código repetido al crear APIs en Java.
+                    <p><strong>Traducción:</strong> avanzamos más rápido con menos dolor.</p>
+                  </div>
+                </li>
+                <li><span class="pill">Base de datos (Producción)</span> PostgreSQL 15
+                  <div class="def"><strong>Qué es:</strong> base de datos robusta y gratuita.
+                    <p><strong>Traducción:</strong> datos ordenados y confiables.</p>
+                  </div>
+                </li>
+                <li><span class="pill">Base de datos (Desarrollo)</span> H2 en memoria
+                  <div class="def"><strong>Qué es:</strong> base “rápida de prueba” en memoria.
+                    <strong>Traducción:</strong> ideal para desarrollar sin instalar nada complejo.
+                  </div>
+                </li>
+                <li><span class="pill">Documentación API</span> Swagger/OpenAPI (springdoc)
+                  <div class="def"><strong>Qué es:</strong> página interactiva para probar la API.
+                    <strong>Traducción:</strong> probamos endpoints en el navegador.
+                  </div>
+                </li>
+                <li><span class="pill">Seguridad</span> Spring Security con JWT y roles
+                  <div class="def"><strong>Qué es:</strong> protege la API con inicios de sesión y permisos.
+                    <strong>Traducción:</strong> solo quien debe, puede ver o cambiar info.
+                  </div>
+                </li>
+                <li><span class="pill">Control de versiones</span> Git + GitHub
+                  <div class="def"><strong>Qué es:</strong> historial y respaldo del trabajo con ramas por entrega.
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="block">
+              <h3>Objetivos</h3>
+              <ul>
+                <li>Velocidad de desarrollo con buenas prácticas.</li>
+                <li>Arquitectura limpia y modular.</li>
+                <li>Seguridad y mantenibilidad desde el inicio.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ENTREGA 1: Arquitectura por Capas -->
+    <section id="e1-capas" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>2. Arquitectura por Capas</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Separación clara en capas: Presentación (API), Aplicación (casos de uso), Dominio (reglas de negocio), e
+            Infraestructura (BD, seguridad, etc.).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Entidades de Dominio -->
+    <section id="e1-dominio" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>3. Entidades de Dominio</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Clientes, Mascotas, Veterinarios, Citas, Facturas, Servicios, con Value Objects como Email, Cédula y
+            Dinero.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Persistencia y BD -->
+    <section id="e1-persistencia" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>4. Persistencia y BD</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Uso de PostgreSQL en producción, H2 para pruebas, y migraciones con Flyway para controlar el esquema.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Repositorios -->
+    <section id="e1-repos" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>5. Repositorios</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Interfaces de repositorio en el Dominio y sus implementaciones en Infraestructura (Adaptadores JPA).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Presentación (API) -->
+    <section id="e1-presentacion" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>6. Presentación (API)</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Controladores REST, DTOs, validaciones, y documentación con Swagger/OpenAPI.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Estructura del Proyecto -->
+    <section id="e1-estructura" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>7. Estructura del proyecto (carpetas ordenadas)</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p>Esta estructura imita cómo organizan proyectos los equipos profesionales: separamos por módulos (dominio,
+            aplicación, infraestructura, API).</p>
+          <div class="diagram">vete/
+            ├─ pom.xml
+            ├─ README.md
+            ├─ .gitignore
+            ├─ docker-compose.yml
+            ├─ .env.example
+            ├─ vete-domain/
+            │ ├─ pom.xml
+            │ └─ src/main/java/com/vete/domain/...
+            ├─ vete-application/
+            │ ├─ pom.xml
+            │ └─ src/main/java/com/vete/application/...
+            ├─ vete-infrastructure/
+            │ ├─ pom.xml
+            │ └─ src/main/java/com/vete/infrastructure/...
+            └─ vete-api/
+            ├─ pom.xml
+            └─ src/main/java/com/vete/api/...</div>
+          <div class="block">
+            <h3>Cómo se conecta todo (flujo típico)</h3>
+            <ol>
+              <li>El <strong>Controller</strong> recibe una petición HTTP con un DTO.</li>
+              <li>Valida el DTO y llama a un <strong>Use Case</strong> en <em>application</em>.</li>
+              <li>El Use Case usa el <strong>Dominio</strong> (entidades/servicios) para aplicar reglas.</li>
+              <li>Cuando necesita datos, llama a un <strong>Repositorio del Dominio</strong> (interface).</li>
+              <li>Un <strong>Adapter</strong> en <em>infrastructure</em> implementa ese repositorio usando <em>Spring
+                  Data JPA</em> y mapea a entidades JPA.</li>
+              <li>Se persiste en la BD, se regresa el resultado al Use Case, luego al Controller y se responde con un
+                DTO.</li>
+            </ol>
+            <div class="def"><strong>DTO:</strong> objeto simple para enviar/recibir datos por la API (sin lógica).
+              <strong>JPA:</strong> estándar para mapear objetos a tablas. <strong>Adapter:</strong> traductor entre
+              dominio y tecnología.
+            </div>
+          </div>
+          <div class="block">
+            <h3>Ejemplo mínimo de archivos clave</h3>
+            <div class="code">package com.vete.domain.repository;
+              import java.util.Optional;
+              import com.vete.domain.model.Cliente;
+              public interface ClienteRepository {
+              Optional&lt;Cliente&gt; findByCedula(String cedula);
+              Cliente save(Cliente cliente);
+              }
+
+              package com.vete.infrastructure.persistence.repository;
+              import java.util.Optional;
+              import org.springframework.data.jpa.repository.JpaRepository;
+              import com.vete.infrastructure.persistence.entity.ClienteEntity;
+              public interface ClienteJpaRepository extends JpaRepository&lt;ClienteEntity, Long&gt; {
+              Optional&lt;ClienteEntity&gt; findByCedula(String cedula);
+              }
+
+              package com.vete.infrastructure.persistence.adapter;
+              import java.util.Optional;
+              import org.springframework.stereotype.Component;
+              import lombok.RequiredArgsConstructor;
+              import com.vete.domain.repository.ClienteRepository;
+              import com.vete.domain.model.Cliente;
+              import com.vete.infrastructure.persistence.repository.ClienteJpaRepository;
+              import com.vete.infrastructure.persistence.entity.ClienteEntity;
+              import com.vete.infrastructure.mapper.ClienteEntityMapper;
+              @Component
+              @RequiredArgsConstructor
+              public class ClienteRepositoryAdapter implements ClienteRepository {
+              private final ClienteJpaRepository jpa;
+              private final ClienteEntityMapper mapper;
+              @Override
+              public Optional&lt;Cliente&gt; findByCedula(String cedula) {
+              return jpa.findByCedula(cedula).map(mapper::toDomain);
+              }
+              @Override
+              public Cliente save(Cliente cliente) {
+              ClienteEntity saved = jpa.save(mapper.toEntity(cliente));
+              return mapper.toDomain(saved);
+              }
+              }</div>
+            <p class="muted">El dominio no depende de JPA ni de Spring; Infraestructura traduce entre dominio y BD.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADRs: Dashboard -->
+    <section id="adrs" class="view">
+      <div class="hero panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h2 style="margin:0">Decisiones de Arquitectura (ADR)</h2>
+            <p class="muted" style="margin:6px 0 0">Registro claro y justificable de decisiones técnicas. Cada ADR
+              incluye contexto, decisión y consecuencias.</p>
+          </div>
+          <a class="btn" href="#" data-route="home">Volver al Inicio</a>
+        </div>
+      </div>
+      <div class="grid section-grid cols-3">
+        <a class="card" href="#" data-route="adr-001">
+          <h4>ADR-001</h4>
+          <p>Estrategia de Autenticación</p>
+        </a>
+        <a class="card" href="#" data-route="adr-002">
+          <h4>ADR-002</h4>
+          <p>Errores y Logs</p>
+        </a>
+        <a class="card" href="#" data-route="adr-003">
+          <h4>ADR-003</h4>
+          <p>Consumo de APIs Externas</p>
+        </a>
+        <a class="card" href="#" data-route="adr-004">
+          <h4>ADR-004</h4>
+          <p>Integración de IA</p>
+        </a>
+        <a class="card" href="#" data-route="adr-005">
+          <h4>ADR-005</h4>
+          <p>Flexibilidad Tecnológica</p>
+        </a>
+        <a class="card" href="#" data-route="adr-006">
+          <h4>ADR-006</h4>
+          <p>Migraciones de BD</p>
+        </a>
+        <a class="card" href="#" data-route="adr-007">
+          <h4>ADR-007</h4>
+          <p>Múltiples Idiomas (i18n)</p>
+        </a>
+        <a class="card" href="#" data-route="adr-008">
+          <h4>ADR-008</h4>
+          <p>Funcionalidad de Búsqueda</p>
+        </a>
+        <a class="card" href="#" data-route="adr-009">
+          <h4>ADR-009</h4>
+          <p>Reportes y PDFs</p>
+        </a>
+        <a class="card" href="#" data-route="adr-010">
+          <h4>ADR-010</h4>
+          <p>Redes Sociales (OAuth2)</p>
+        </a>
+        <a class="card" href="#" data-route="adr-011">
+          <h4>ADR-011</h4>
+          <p>Protección de Datos (GDPR)</p>
+        </a>
+        <a class="card" href="#" data-route="adr-012">
+          <h4>ADR-012</h4>
+          <p>Accesibilidad (WCAG)</p>
+        </a>
+        <a class="card" href="#" data-route="adr-013">
+          <h4>ADR-013</h4>
+          <p>Diseño Responsivo</p>
+        </a>
+        <a class="card" href="#" data-route="adr-014">
+          <h4>ADR-014</h4>
+          <p>Versionado (Git/GitFlow)</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ADR-001 -->
+    <section id="adr-001" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-001 · Estrategia de Autenticación de Usuarios</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Necesitamos autenticación segura por rol (ADMIN, VET, AUX,
+            CLIENTE) para web y móvil, con escalabilidad horizontal.</p>
+          <div class="def"><strong>Decisión:</strong> Autenticación stateless con JSON Web Tokens (JWT) firmados (HS256
+            inicialmente), enviados en el encabezado Authorization: Bearer. Refresco mediante tokens de refresh con
+            rotación y expiración corta para el access token.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Escalable (sin sesión en servidor), compatible con
+            múltiples clientes, fácil integración con gateways. − Requiere manejo de revocación (lista negra o
+            invalidación por versión de token), no poner datos sensibles en el payload.</div>
+          <div class="code">// Pseudocódigo de validación (Aplicación/Infra)
+            if (!authHeader.startsWith("Bearer ")) deny();
+            String jwt = authHeader.substring(7);
+            Claims c = jwtService.verify(jwt); // firma + expiración
+            authorize(c.role()); // mapea a permisos</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-002 -->
+    <section id="adr-002" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-002 · Manejo de Errores y Generación de Logs</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Errores son inevitables. Necesitamos feedback claro al usuario y
+            trazabilidad para desarrollo.</p>
+          <div class="def"><strong>Decisión:</strong> Doble canal: mensajes de error amigables y consistentes en UI
+            (códigos y textos mapeados) y logging estructurado en servidor (JSON) con niveles (INFO/WARN/ERROR),
+            correlación por request-id y captura centralizada de excepciones.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Mejor UX, diagnósticos rápidos, observabilidad. − Requiere
+            estandarizar códigos y disciplina en los niveles de log.</div>
+          <div class="code">// Ejemplo de cuerpo de error (API)
+            { "code": "CLIENTE_NO_ENCONTRADO", "message": "No pudimos encontrar ese cliente.", "traceId": "f1a2..." }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-003 -->
+    <section id="adr-003" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-003 · Consumo de APIs Externas</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Integraciones con pago, notificaciones, IA, etc., pueden cambiar.
+          </p>
+          <div class="def"><strong>Decisión:</strong> Capa de Adaptadores/Servicios externos en Infraestructura con
+            interfaces (puertos) en Dominio/Aplicación. Timeouts, reintentos con backoff, circuit breaker y mapeo de
+            errores a nuestras excepciones.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Bajo acoplamiento, reemplazo de proveedor sin tocar
+            negocio. − Más componentes y pruebas de contrato.</div>
+          <div class="code">// Puerto (Aplicación)
+            interface PagoGateway { PagoResult cobrar(PagoRequest r); }
+            // Adaptador (Infra)
+            class PagoStripeAdapter implements PagoGateway { /* ... */ }</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-004 -->
+    <section id="adr-004" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-004 · Integración de Inteligencia Artificial (IA)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Se planea asistente para agendar citas y responder consultas
+            básicas.</p>
+          <div class="def"><strong>Decisión:</strong> Usar proveedor externo (OpenAI/Vertex AI) vía API a través de un
+            adaptador de IA. Datos sensibles anonimizados antes de enviar. Limitar prompts y costos con cuotas y
+            caching.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Time-to-market rápido, calidad de modelo. − Dependencia del
+            proveedor y costos variables; se mitiga con abstracción y estrategia de fallback.</div>
+          <div class="code">// Puerto IA
+            interface AsistenteIA { Respuesta asistir(Peticion p); }</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-005 -->
+    <section id="adr-005" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-005 · Flexibilidad para Cambios de Tecnología</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Tecnologías cambian (frameworks, runtimes, UI).</p>
+          <div class="def"><strong>Decisión:</strong> Arquitectura en capas (Presentación, Aplicación, Dominio,
+            Infraestructura) con dependencias hacia dentro. Contratos en Dominio/Aplicación y detalles en
+            Infraestructura. Uso de patrones Strategy, Factory, Observer para extensibilidad.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Reemplazo de UI o persistencia con impacto mínimo. − Curva
+            inicial de diseño y disciplina en límites.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-006 -->
+    <section id="adr-006" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-006 · Estrategia para Migraciones de Base de Datos</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Posibles cambios de motor (MySQL ↔ PostgreSQL) y evolución de
+            esquema.</p>
+          <div class="def"><strong>Decisión:</strong> ORM (Hibernate/JPA) + migraciones con Flyway. Repositorios como
+            puertos. SQL nativo solo cuando sea necesario y encapsulado.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Portabilidad y control de versiones del esquema. − Requiere
+            disciplina en migraciones y pruebas de performance.</div>
+          <div class="code">// Ejemplo Flyway
+            V1__crear_tablas_basicas.sql
+            V2__agregar_indice_citas.sql</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-007 -->
+    <section id="adr-007" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-007 · Soporte para Múltiples Idiomas (i18n)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Usuarios de distintos idiomas (zona turística).</p>
+          <div class="def"><strong>Decisión:</strong> Internacionalización con archivos de recursos por idioma (ej.
+            textos_es.json, textos_en.json) y detección de locale. No hardcodear textos en la UI.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Añadir idiomas sin tocar código. − Requiere proceso de
+            traducción y validación de contexto.</div>
+          <div class="code">// Estructura
+            i18n/
+            ├─ es.json
+            └─ en.json</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-008 -->
+    <section id="adr-008" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-008 · Funcionalidad de Búsqueda</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Búsqueda de clientes, mascotas e historiales.</p>
+          <div class="def"><strong>Decisión:</strong> Búsqueda inicial con consultas SQL sobre campos indexados,
+            paginación y filtros. Diseñar puerto para integrar Elasticsearch a futuro sin romper contratos.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Simple y económica al inicio. − Requiere estrategia de
+            escalado (caché, índices compuestos) antes de migrar a motor dedicado.</div>
+          <div class="code">// Índices recomendados
+            CREATE INDEX idx_cliente_nombre ON cliente(nombre);
+            CREATE INDEX idx_mascota_duenio ON mascota(duenio_id);</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-009 -->
+    <section id="adr-009" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-009 · Generación de Informes y Reportes</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Facturas, historias clínicas, recetas en PDF.</p>
+          <div class="def"><strong>Decisión:</strong> Módulo de reportes con librería especializada (JasperReports) y
+            plantillas (.jrxml) versionadas. Generación asíncrona para reportes pesados.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Cambios de diseño sin tocar código; mejor rendimiento. −
+            Curva de aprendizaje de plantillas.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-010 -->
+    <section id="adr-010" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-010 · Conexión con Redes Sociales (OAuth 2.0)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Registro/Inicio rápido con Google/Facebook.</p>
+          <div class="def"><strong>Decisión:</strong> OAuth 2.0 y OpenID Connect con SDKs oficiales, validación del
+            id_token y vinculación de cuentas a nuestro usuario interno.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Mejor UX, menos gestión de contraseñas. − Manejo de flujos
+            y cambios de políticas de los proveedores.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-011 -->
+    <section id="adr-011" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-011 · Cumplimiento de Protección de Datos (GDPR)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Datos personales y clínicos sensibles.</p>
+          <div class="def"><strong>Decisión:</strong> Cifrado en tránsito (TLS) y en reposo (campos sensibles), control
+            de acceso por roles, consentimiento explícito, registro de auditoría, y mecanismos para ejercer derechos
+            (acceso, rectificación, borrado).</div>
+          <div class="def"><strong>Consecuencias:</strong> + Cumplimiento legal y confianza del usuario. − Esfuerzo
+            adicional en procesos y documentación.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-012 -->
+    <section id="adr-012" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-012 · Inclusión y Accesibilidad (WCAG)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Uso por personas con diversas capacidades.</p>
+          <div class="def"><strong>Decisión:</strong> Seguir WCAG 2.1 AA: contraste, tamaños legibles, navegación por
+            teclado, etiquetas/ARIA, focus visible, textos alternativos y validación de formularios accesible.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Acceso universal y cumplimiento normativo. − Requiere
+            revisiones UX y pruebas con lectores de pantalla.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-013 -->
+    <section id="adr-013" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-013 · Diseño Adaptable (Responsivo)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Acceso desde desktop, tablet y móvil.</p>
+          <div class="def"><strong>Decisión:</strong> CSS Grid/Flex, breakpoints y componentes fluidos; evitar valores
+            fijos donde no aporten; imágenes responsivas.</div>
+          <div class="def"><strong>Consecuencias:</strong> + UX consistente en cualquier dispositivo. − Trabajo
+            adicional en pruebas multi-dispositivo.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADR-014 -->
+    <section id="adr-014" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex;justify-content:space-between;align-items:center">
+          <h2>ADR-014 · Manejo de Versiones del Código (Git/GitFlow)</h2>
+          <div style="display:flex;gap:8px">
+            <a class="btn ghost small" href="#" data-route="adrs">Volver a ADRs</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted"><strong>Contexto:</strong> Colaboración, historial y releases estables.</p>
+          <div class="def"><strong>Decisión:</strong> Git en GitHub con GitFlow (main, develop, feature/*, release/*,
+            hotfix/*), PRs con revisión, CI para pruebas automáticas y versionado semántico.</div>
+          <div class="def"><strong>Consecuencias:</strong> + Flujo ordenado, menos regresiones, trazabilidad. − Requiere
+            disciplina en ramas y revisiones.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTREGA 1: Calidad, rendimiento y seguridad -->
+    <section id="e1-calidad" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>9. Calidad, rendimiento y seguridad</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e1">Volver a Entrega 1</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <div class="grid cols-3">
+            <div class="block">
+              <h3>Rendimiento</h3>
+              <ul>
+                <li>Paginación en listados grandes.</li>
+                <li>Índices en cédula y fecha de cita.</li>
+                <li>Caché para catálogos estables.</li>
+              </ul>
+            </div>
+            <div class="block">
+              <h3>Seguridad</h3>
+              <ul>
+                <li>JWT + roles: ADMIN, VET, AUX, CLIENTE. <div class="def">JWT: pase digital firmado que el cliente
+                    envía en cada petición; el servidor verifica la firma para identidad y permisos.</div>
+                </li>
+                <li>Contraseñas con BCrypt. <div class="def">BCrypt: hash irreversible con sal y costo; protege incluso
+                    si filtran la base.</div>
+                </li>
+                <li>Auditoría básica (quién/cuándo). <div class="def">Campos
+                    creadoPor/creadoEn/actualizadoPor/actualizadoEn para trazabilidad.</div>
+                </li>
+              </ul>
+            </div>
+            <div class="block">
+              <h3>Mantenimiento</h3>
+              <ul>
+                <li>Pruebas con H2. <div class="def">BD en memoria para pruebas rápidas.</div>
+                </li>
+                <li>Nombres claros y consistentes.</li>
+                <li>ADRs documentadas. <div class="def">Registro corto de decisiones y consecuencias.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ENTREGA 2: Dashboard de secciones -->
+    <section id="e2" class="view">
+      <div class="hero panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h2 style="margin:0">Entrega 2 · Patrones de Diseño</h2>
+            <p class="muted" style="margin:6px 0 0">Aplicamos 3 patrones (Strategy, Factory, Observer) para flexibilidad
+              y mantenibilidad, alineados con la arquitectura por capas.</p>
+          </div>
+          <a class="btn" href="#" data-route="home">Volver al Inicio</a>
+        </div>
+      </div>
+      <div class="grid section-grid cols-3">
+        <a class="card" href="#" data-route="e2-strategy">
+          <h4>1) Strategy · Precio final</h4>
+          <p>Intercambia reglas de precio sin tocar casos de uso.</p>
+        </a>
+        <a class="card" href="#" data-route="e2-factory">
+          <h4>2) Factory · Usuarios por rol</h4>
+          <p>Creación consistente de ADMIN, VET, AUX, CLIENTE.</p>
+        </a>
+        <a class="card" href="#" data-route="e2-observer">
+          <h4>3) Observer · Notificaciones</h4>
+          <p>Reacciona a eventos de dominio sin acoplar lógica.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- E2 · Strategy (lectura centrada) -->
+    <section id="e2-strategy" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>Strategy · Cálculo de precio final</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e2">Volver a Entrega 2</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted">Cada regla de precio es una estrategia independiente (descuento frecuente, promo por especie,
+            impuesto por servicio). Se encadenan con un compositor. Cambias reglas sin tocar el caso de uso.</p>
+          <div class="code">package com.vete.domain.pricing;
+            // Contrato: todas las reglas implementan este método.
+            public interface PricingStrategy {
+            Money calculate(Money base, PricingContext ctx);
+            }
+
+            package com.vete.domain.pricing;
+            import java.math.BigDecimal;
+            // VO Money: seguro e inmutable para manejar dinero.
+            public record Money(BigDecimal amount, String currency) {
+            public Money add(Money other) {
+            if (!this.currency.equals(other.currency)) throw new IllegalArgumentException("Moneda distinta");
+            return new Money(this.amount.add(other.amount), this.currency);
+            }
+            public Money multiply(double factor) {
+            return new Money(this.amount.multiply(BigDecimal.valueOf(factor)), this.currency);
+            }
+            }
+
+            package com.vete.domain.pricing;
+            // Contexto mínimo para decidir si aplica cada regla.
+            public record PricingContext(String clienteCategoria, String especie, String servicioCodigo) {}
+
+            package com.vete.domain.pricing.impl;
+            import com.vete.domain.pricing.*;
+            // FRECUENTE => -10%
+            public class FrequentClientDiscount implements PricingStrategy {
+            @Override public Money calculate(Money base, PricingContext ctx) {
+            return "FRECUENTE".equalsIgnoreCase(ctx.clienteCategoria()) ? base.multiply(0.90) : base;
+            }
+            }
+
+            package com.vete.domain.pricing.impl;
+            import com.vete.domain.pricing.*;
+            // GATO => -5%
+            public class SpeciesPromoStrategy implements PricingStrategy {
+            @Override public Money calculate(Money base, PricingContext ctx) {
+            return "GATO".equalsIgnoreCase(ctx.especie()) ? base.multiply(0.95) : base;
+            }
+            }
+
+            package com.vete.domain.pricing.impl;
+            import com.vete.domain.pricing.*;
+            // CIRUGIA => +5% impuesto
+            public class ServiceTaxStrategy implements PricingStrategy {
+            @Override public Money calculate(Money base, PricingContext ctx) {
+            return "CIRUGIA".equalsIgnoreCase(ctx.servicioCodigo()) ? base.multiply(1.05) : base;
+            }
+            }
+
+            package com.vete.domain.pricing;
+            import java.util.List;
+            // Compositor: aplica N estrategias en orden.
+            public class CompositePricing implements PricingStrategy {
+            private final List&lt;PricingStrategy&gt; strategies;
+            public CompositePricing(List&lt;PricingStrategy&gt; strategies) { this.strategies = strategies; }
+            @Override public Money calculate(Money base, PricingContext ctx) {
+            Money result = base;
+            for (PricingStrategy s : strategies) result = s.calculate(result, ctx);
+            return result;
+            }
+            }
+
+            package com.vete.application.pricing;
+            import com.vete.domain.pricing.*;
+            import com.vete.domain.pricing.impl.*;
+            import java.math.BigDecimal;
+            import java.util.List;
+            // Aplicación: decide qué reglas están activas hoy.
+            public class PricingService {
+            public Money calcularPrecio(String servicioCodigo, String especie, String clienteCategoria, BigDecimal base)
+            {
+            PricingContext ctx = new PricingContext(clienteCategoria, especie, servicioCodigo);
+            PricingStrategy strategy = new CompositePricing(List.of(
+            new FrequentClientDiscount(),
+            new SpeciesPromoStrategy(),
+            new ServiceTaxStrategy()
+            ));
+            return strategy.calculate(new Money(base, "COP"), ctx);
+            }
+            }</div>
+          <div class="def"><strong>Nota explicativa:</strong> dividimos el cálculo en reglas pequeñas y encadenables
+            (descuentos, promos, impuestos). <em>Escenario real:</em> precio base 100.000 COP → cliente FRECUENTE (-10%)
+            = 90.000 → especie GATO (-5%) = 85.500 → servicio CIRUGIA (+5%) = 89.775 COP. <em>Flexibilidad:</em>
+            añadir/quitar/reordenar reglas sin tocar el caso de uso ni otras clases; nuevas campañas se integran creando
+            otra estrategia.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- E2 · Factory (lectura centrada) -->
+    <section id="e2-factory" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>Factory · Creación de usuarios por rol</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e2">Volver a Entrega 2</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted">Centraliza la construcción de usuarios (ADMIN, VET, AUX, CLIENTE). Consistencia sin duplicar
+            lógica en controladores o casos de uso.</p>
+          <div class="code">package com.vete.domain.user;
+            // Entidad simple (Dominio)
+            public class Usuario {
+            private final String username;
+            private final String role; // ADMIN, VET, AUX, CLIENTE
+            private final boolean active;
+            public Usuario(String username, String role, boolean active) {
+            this.username = username; this.role = role; this.active = active;
+            }
+            public String getUsername() { return username; }
+            public String getRole() { return role; }
+            public boolean isActive() { return active; }
+            }
+
+            package com.vete.domain.user;
+            // Parámetros de creación (Dominio)
+            public record UsuarioParams(String username, String role) {}
+
+            package com.vete.application.user;
+            // Factory (Aplicación): estandariza defaults por rol.
+            import com.vete.domain.user.Usuario;
+            import com.vete.domain.user.UsuarioParams;
+            public class UsuarioFactory {
+            public Usuario create(UsuarioParams params) {
+            return switch (params.role()) {
+            case "ADMIN" -&gt; new Usuario(params.username(), "ADMIN", true);
+            case "VET" -&gt; new Usuario(params.username(), "VET", true);
+            case "AUX" -&gt; new Usuario(params.username(), "AUX", true);
+            case "CLIENTE" -&gt; new Usuario(params.username(), "CLIENTE", true);
+            default -&gt; throw new IllegalArgumentException("Rol no soportado: " + params.role());
+            };
+            }
+            }
+
+            package com.vete.application.user;
+            // Uso típico (Aplicación): registro consistente.
+            import com.vete.domain.user.Usuario;
+            import com.vete.domain.user.UsuarioParams;
+            public class RegistroUsuarioService {
+            private final UsuarioFactory factory;
+            public RegistroUsuarioService(UsuarioFactory factory) { this.factory = factory; }
+            public Usuario registrar(String username, String role) {
+            Usuario nuevo = factory.create(new UsuarioParams(username, role));
+            // Persistir vía repositorio del dominio (puerto)...
+            return nuevo;
+            }
+            }</div>
+          <div class="def"><strong>Nota explicativa:</strong> centralizamos la creación de usuarios por rol para
+            garantizar valores correctos y consistentes. <em>Escenario real:</em> registrar("ana","VET") →
+            Usuario{username="ana", role="VET", active=true}; si llega un rol no soportado, la fábrica lo rechaza de
+            forma uniforme. <em>Flexibilidad:</em> agregar un nuevo rol (p. ej., "ADMIN_AUDITOR") solo requiere extender
+            la Factory, sin tocar controladores ni casos de uso.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- E2 · Observer (lectura centrada) -->
+    <section id="e2-observer" class="view">
+      <div class="reader">
+        <div class="block" style="display:flex; justify-content:space-between; align-items:center">
+          <h2>Observer · Notificaciones por eventos</h2>
+          <div style="display:flex; gap:8px">
+            <a class="btn ghost small" href="#" data-route="e2">Volver a Entrega 2</a>
+            <a class="btn primary small" href="#" data-route="home">Inicio</a>
+          </div>
+        </div>
+        <div class="block">
+          <p class="muted">Desacopla efectos secundarios (email/SMS) del caso de uso. Los suscriptores reaccionan a
+            eventos del dominio sin tocar la lógica principal.</p>
+          <div class="code">package com.vete.domain.events;
+            // Evento base (Dominio)
+            public interface DomainEvent { String type(); long occurredAt(); }
+
+            package com.vete.domain.events;
+            // Evento concreto: cita creada
+            public class CitaCreadaEvent implements DomainEvent {
+            private final String citaId; private final String clienteEmail; private final long occurredAt =
+            System.currentTimeMillis();
+            public CitaCreadaEvent(String citaId, String clienteEmail) { this.citaId = citaId; this.clienteEmail =
+            clienteEmail; }
+            public String citaId() { return citaId; } public String clienteEmail() { return clienteEmail; }
+            public String type() { return "CITA_CREADA"; } public long occurredAt() { return occurredAt; }
+            }
+
+            package com.vete.domain.events;
+            // Contrato de suscriptor (Dominio)
+            public interface DomainEventSubscriber&lt;E extends DomainEvent&gt; {
+            boolean supports(String type);
+            void onEvent(E event);
+            }
+
+            package com.vete.application.events;
+            import com.vete.domain.events.*;
+            import java.util.ArrayList; import java.util.List;
+            // Bus simple (Aplicación): publica a suscriptores compatibles.
+            public class SimpleEventBus {
+            private final List&lt;DomainEventSubscriber&lt;? super DomainEvent&gt;&gt; subs = new ArrayList<>();
+              public void subscribe(DomainEventSubscriber&lt;? super DomainEvent&gt; s) { subs.add(s); }
+              public void publish(DomainEvent event) { for (var s : subs) if (s.supports(event.type()))
+              s.onEvent(event); }
+              }
+
+              package com.vete.infrastructure.notifications;
+              import com.vete.domain.events.*;
+              // Email (Infraestructura)
+              public class EmailNotificacionSubscriber implements DomainEventSubscriber&lt;DomainEvent&gt; {
+              public boolean supports(String type) { return "CITA_CREADA".equals(type); }
+              public void onEvent(DomainEvent event) {
+              if (event instanceof CitaCreadaEvent e) System.out.println("EMAIL → Cita " + e.citaId() + " a " +
+              e.clienteEmail());
+              }
+              }
+
+              package com.vete.infrastructure.notifications;
+              import com.vete.domain.events.*;
+              // SMS (Infraestructura)
+              public class SmsNotificacionSubscriber implements DomainEventSubscriber&lt;DomainEvent&gt; {
+              public boolean supports(String type) { return "CITA_CREADA".equals(type); }
+              public void onEvent(DomainEvent event) {
+              if (event instanceof CitaCreadaEvent e) System.out.println("SMS → Cita " + e.citaId() + " para " +
+              e.clienteEmail());
+              }
+              }
+
+              package com.vete.application.citas;
+              import com.vete.application.events.SimpleEventBus;
+              import com.vete.domain.events.CitaCreadaEvent;
+              // Caso de uso: publica evento tras crear la cita.
+              public class CrearCitaUseCase {
+              private final SimpleEventBus eventBus;
+              public CrearCitaUseCase(SimpleEventBus eventBus) { this.eventBus = eventBus; }
+              public String crearCita(String clienteEmail, String mascotaId, String servicioCodigo) {
+              String citaId = java.util.UUID.randomUUID().toString();
+              // ...validar y persistir vía repositorios (puerto)...
+              eventBus.publish(new CitaCreadaEvent(citaId, clienteEmail));
+              return citaId;
+              }
+              }
+
+              package com.vete.infrastructure.config;
+              import com.vete.application.events.SimpleEventBus;
+              import com.vete.infrastructure.notifications.*;
+              // Bootstrap: suscribe canales.
+              public class EventConfig {
+              public static SimpleEventBus eventBus() {
+              SimpleEventBus bus = new SimpleEventBus();
+              bus.subscribe(new EmailNotificacionSubscriber());
+              bus.subscribe(new SmsNotificacionSubscriber());
+              return bus;
+              }
+              }</div>
+          <div class="def"><strong>Nota explicativa:</strong> el caso de uso publica eventos y los canales (email/SMS)
+            reaccionan como suscriptores independientes. <em>Escenario real:</em> al crear una cita se emite CITA_CREADA
+            → EmailSubscriber envía correo y SmsSubscriber envía SMS. <em>Flexibilidad:</em> sumar canales (Push,
+            Webhook) se hace agregando nuevos suscriptores, sin modificar la lógica de crear cita ni rehacer pruebas del
+            caso de uso.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="e3" class="view">
+      <div class="hero panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h2 style="margin:0">Entrega 3</h2>
+            <p class="muted" style="margin:6px 0 0">Panel de secciones listo para tu contenido.</p>
+          </div>
+          <a class="btn" href="#" data-route="home">Volver al Inicio</a>
+        </div>
+      </div>
+      <div class="grid section-grid cols-3">
+        <a class="card" href="#">
+          <h4>Sección A</h4>
+          <p>Agrega aquí.</p>
+        </a>
+        <a class="card" href="#">
+          <h4>Sección B</h4>
+          <p>Agrega aquí.</p>
+        </a>
+        <a class="card" href="#">
+          <h4>Sección C</h4>
+          <p>Agrega aquí.</p>
+        </a>
+      </div>
+    </section>
+
+    <section id="e4" class="view">
+      <div class="hero panel">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+          <div>
+            <h2 style="margin:0">Entrega 4</h2>
+            <p class="muted" style="margin:6px 0 0">Panel de secciones listo para tu contenido.</p>
+          </div>
+          <a class="btn" href="#" data-route="home">Volver al Inicio</a>
+        </div>
+      </div>
+      <div class="grid section-grid cols-3">
+        <a class="card" href="#">
+          <h4>Sección A</h4>
+          <p>Agrega aquí.</p>
+        </a>
+        <a class="card" href="#">
+          <h4>Sección B</h4>
+          <p>Agrega aquí.</p>
+        </a>
+        <a class="card" href="#">
+          <h4>Sección C</h4>
+          <p>Agrega aquí.</p>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      Hecho para seguimiento de la materia de Arquitectura de Software en la Universidad Uniremington. © 2025
+    </footer>
+  </div>
+</body>
+
+</html>

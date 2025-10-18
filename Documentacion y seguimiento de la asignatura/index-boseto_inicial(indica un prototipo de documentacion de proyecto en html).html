@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento de Arquitectura - Software Veterinaria Muro</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --sidebar-bg: #2c3e50;
+            --sidebar-text: #bdc3c7;
+            --sidebar-text-hover: #ffffff;
+            --sidebar-active-bg: #3498db;
+            --card-bg: #ffffff;
+            --card-border: #dee2e6;
+            --header-border: #3498db;
+            --font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: #343a40;
+            display: flex;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text-hover);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            padding-top: 20px;
+            transition: width 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.4em;
+            color: var(--sidebar-text-hover);
+        }
+
+        .sidebar-header p {
+            margin: 5px 0 0;
+            font-size: 0.8em;
+            color: var(--sidebar-text);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.95em;
+            padding: 12px 25px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .sidebar-nav li a:hover {
+            background-color: #34495e;
+            color: var(--sidebar-text-hover);
+        }
+
+        .sidebar-nav li a.active {
+            background-color: var(--sidebar-active-bg);
+            color: var(--sidebar-text-hover);
+            font-weight: bold;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px 40px;
+            width: calc(100% - 280px);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            font-size: 2.2em;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--header-border);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        /* --- Accordion for Views --- */
+        .card details {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .card details:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .card summary {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #34495e;
+            padding: 15px 0;
+            cursor: pointer;
+            outline: none;
+            list-style: none;
+            /* Remove default marker */
+        }
+
+        .card summary::-webkit-details-marker {
+            display: none;
+            /* Chrome */
+        }
+
+        .card summary::before {
+            content: '+';
+            /* Custom marker */
+            font-weight: bold;
+            margin-right: 10px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .card details[open] summary::before {
+            transform: rotate(45deg);
+        }
+
+        .view-content {
+            padding-bottom: 15px;
+        }
+
+        .view-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 15px;
+            border: 1px solid var(--card-border);
+        }
+
+        /* --- ADR Panel Styles --- */
+        .adr-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .adr-card {
+            background-color: #fff;
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .adr-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .adr-card h4 {
+            margin: 0 0 5px 0;
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+
+        .adr-card p {
+            margin: 0;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.4s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+        }
+
+        .modal-body h4 {
+            color: #343a40;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .3em .7em;
+            font-size: 80%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: .25rem;
+            color: #fff;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h2>Veterinaria Muro</h2>
+            <p>Doc. de Arquitectura</p>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#justificacion" class="nav-link active">1. Justificación y Problema</a></li>
+            <li><a href="#modelo" class="nav-link">2. Modelo de Desarrollo</a></li>
+            <li><a href="#requisitos-funcionales" class="nav-link">3. Requisitos Funcionales</a></li>
+            <li><a href="#requisitos-no-funcionales" class="nav-link">4. Requisitos No Funcionales</a></li>
+            <li><a href="#alcance" class="nav-link">5. Alcance y Restricciones</a></li>
+            <li><a href="#involucrados" class="nav-link">6. Involucrados</a></li>
+            <li><a href="#diseno" class="nav-link">7. Diseño Arquitectónico</a></li>
+            <li><a href="#adrs" class="nav-link">8. Decisiones (ADR)</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <section id="justificacion" class="content-section active">
+            <h1 class="page-header">1. Justificación y Problema a Resolver</h1>
+            <div class="card">
+                <p>Actualmente, la "Veterinaria Muro" gestiona su información de forma manual, lo que ocasiona retrasos,
+                    pérdida de tiempo, inconsistencias en los datos y molestias a los clientes.</p>
+                <p>El objetivo principal es <strong>diseñar una aplicación que automatice y centralice la gestión de
+                        historias clínicas, citas y facturación</strong>, mejorando la calidad del servicio y
+                    posicionando a la veterinaria en un nivel competitivo.</p>
+            </div>
+        </section>
+
+        <section id="modelo" class="content-section">
+            <h1 class="page-header">2. Modelo de Desarrollo Propuesto</h1>
+            <div class="card">
+                <h3>Metodología Ágil (Scrum)</h3>
+                <ul>
+                    <li><strong>Flexibilidad:</strong> Permite incorporar cambios de requisitos durante el desarrollo.
+                    </li>
+                    <li><strong>Entregas parciales:</strong> Cada Sprint produce una funcionalidad usable (ej: módulo de
+                        citas).</li>
+                    <li><strong>Colaboración:</strong> El cliente participa activamente con retroalimentación continua.
+                    </li>
+                    <li><strong>Reducción de riesgos:</strong> Los problemas se detectan temprano en ciclos cortos.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="requisitos-funcionales" class="content-section">
+            <h1 class="page-header">3. Requisitos Funcionales</h1>
+            <div class="card">
+                <ul>
+                    <li>Gestión de Mascotas</li>
+                    <li>Gestión de Clientes</li>
+                    <li>Gestión de Veterinarios</li>
+                    <li>Gestión de Citas</li>
+                    <li>Gestión de Servicios y Facturación</li>
+                    <li>Gestión de Exámenes Clínicos</li>
+                    <li>Administración de Usuarios y Perfiles</li>
+                    <li>Generación de Informes</li>
+                    <li>Consultas: historial clínico, ventas, citas programadas</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="requisitos-no-funcionales" class="content-section">
+            <h1 class="page-header">4. Requisitos No Funcionales (FURPS+)</h1>
+            <div class="card">
+                <h3>Usabilidad</h3>
+                <ul>
+                    <li>Interfaz intuitiva y sencilla</li>
+                    <li>Colores claros y accesibilidad para personas con problemas visuales</li>
+                    <li>Diseño responsive</li>
+                </ul>
+                <h3>Confiabilidad</h3>
+                <ul>
+                    <li>Disponible 24/7</li>
+                    <li>Consistencia en la base de datos</li>
+                    <li>Copia de seguridad automática</li>
+                </ul>
+                <h3>Rendimiento</h3>
+                <ul>
+                    <li>Respuestas rápidas</li>
+                    <li>Carga de interfaz eficiente</li>
+                </ul>
+                <h3>Soportabilidad</h3>
+                <ul>
+                    <li>Documentación PDF y manuales</li>
+                    <li>Capacitación a usuarios</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="alcance" class="content-section">
+            <h1 class="page-header">5. Alcance y Restricciones del Sistema</h1>
+            <div class="card">
+                <h3>Alcance</h3>
+                <ul>
+                    <li><strong>Incluye:</strong> Gestión de clientes, mascotas, citas, facturación, servicios, exámenes
+                        clínicos, historial médico e informes.</li>
+                    <li><strong>No incluye:</strong> Integraciones externas, aplicaciones móviles nativas ni
+                        telemedicina.</li>
+                </ul>
+                <h3>Restricciones</h3>
+                <ul>
+                    <li>Uso de Java y frameworks compatibles</li>
+                    <li>Infraestructura de bajo costo</li>
+                    <li>Acceso vía web</li>
+                </ul>
+                <h3>Suposiciones</h3>
+                <ul>
+                    <li>Conexión a Internet estable</li>
+                    <li>Personal capacitado en informática básica</li>
+                    <li>Clientes con acceso a dispositivos con navegador</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="involucrados" class="content-section">
+            <h1 class="page-header">6. Involucrados y Preocupaciones</h1>
+            <div class="card">
+                <ul>
+                    <li><strong>Veterinario (Cliente):</strong> confiabilidad, calidad del servicio, reducción de
+                        tiempos.</li>
+                    <li><strong>Auxiliar/Secretaria:</strong> facilidad de uso, eficiencia en gestión de citas.</li>
+                    <li><strong>Clientes (Dueños de mascotas):</strong> rapidez en agendamiento, seguridad de datos.
+                    </li>
+                    <li><strong>Administrador del sistema:</strong> seguridad, disponibilidad, respaldo de datos.</li>
+                    <li><strong>Equipo de desarrollo:</strong> factibilidad técnica, cumplimiento de plazos.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="diseno" class="content-section">
+            <h1 class="page-header">7. Diseño Arquitectónico</h1>
+            <div class="card">
+                <h3>Racional Arquitectónico</h3>
+                <p><strong>Estilo elegido:</strong> Arquitectura en Capas</p>
+                <p><strong>Justificación:</strong> Separación modular facilita el mantenimiento y escalabilidad. Se
+                    contemplan capas de Presentación, Lógica de Negocio y Datos.</p>
+                <h4>Decisiones Clave</h4>
+                <ul>
+                    <li>Lenguaje: Java</li>
+                    <li>Base de datos: MySQL/MariaDB</li>
+                    <li>Framework: Spring Boot</li>
+                    <li>Gestión de versiones: GitHub</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>Vistas Arquitectónicas</h3>
+                <details>
+                    <summary>Vista Lógica (Componentes)</summary>
+                    <div class="view-content">
+                        <p>Muestra los componentes principales del sistema y sus relaciones. Componentes: Clientes,
+                            Mascotas, Citas, Servicios, Facturación, Exámenes, Informes, Administración.</p>
+                        <img src="img/diagrama-componentes.jpg"
+                            alt="Diagrama de Componentes">
+                    </div>
+                </details>
+                <details>
+                    <summary>Vista de Proceso</summary>
+                    <div class="view-content">
+                        <p>Describe la interacción entre componentes para realizar una tarea. Ejemplo: Flujo de
+                            asignación de una nueva cita, desde la solicitud del usuario hasta la confirmación en la
+                            base de datos.</p>
+                        <img src="img/diagrama-secuencia.png"
+                            alt="Diagrama de Secuencia de Citas">
+                    </div>
+                </details>
+                <details>
+                    <summary>Vista de Despliegue</summary>
+                    <div class="view-content">
+                        <p>Ilustra cómo se distribuye el software en la infraestructura física. El sistema se despliega
+                            en un servidor web que contiene la aplicación Spring Boot, conectado a un servidor de base
+                            de datos MySQL. Los usuarios acceden vía web.</p>
+                        <img src="img/vista-despliegue.png"
+                            alt="Diagrama de Despliegue">
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section id="adrs" class="content-section">
+            <h1 class="page-header">8. Decisiones Arquitectónicas (ADR)</h1>
+            <div class="adr-panel">
+                <!-- ADR cards will be dynamically generated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Structure -->
+    <div id="adrModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close-button">&times;</span>
+            </div>
+            <div id="modalBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const adrData = [
+            { id: 'ADR-001', title: 'Estrategia de Autenticación de Usuarios', context: 'El sistema debe ser seguro y garantizar que solo usuarios autorizados (administrador, veterinario, auxiliar, cliente) puedan acceder a las funciones que les corresponden.', decision: 'Se implementará un sistema de autenticación basado en <strong>JSON Web Tokens (JWT)</strong>. Al iniciar sesión, el sistema genera un JWT que el cliente envía en cada petición para validar su identidad y permisos.', consequences: '<p><span class="badge badge-success">A favor:</span> JWT es un estándar de la industria, no requiere estado en el servidor (mejora la escalabilidad) y funciona bien para web y móvil.</p><p><span class="badge badge-danger">En contra:</span> La información del token no está encriptada por defecto (no guardar datos sensibles). La invalidación de tokens requiere una estrategia adicional (ej. lista negra).</p>' },
+            { id: 'ADR-002', title: 'Manejo de Errores y Generación de Logs', context: 'Es inevitable que ocurran errores. Necesitamos una forma organizada de comunicarlos al usuario y de registrarlos para que los desarrolladores puedan solucionarlos.', decision: 'Se adoptará una estrategia de dos niveles: <strong>Alertas amigables</strong> en la interfaz para errores predecibles y <strong>Logs detallados</strong> en el servidor para errores inesperados del sistema.', consequences: 'Mejora la experiencia del usuario (no ve errores técnicos) y provee al equipo de desarrollo la información precisa para diagnosticar y reparar fallos.' },
+            { id: 'ADR-003', title: 'Consumo de APIs Externas', context: 'El sistema podría necesitar conectarse con servicios externos (pasarelas de pago, servicios de IA, etc.).', decision: 'Toda la comunicación con APIs externas se centralizará en una <strong>capa de "Adaptadores" o "Servicios"</strong> en el backend.', consequences: 'Aislar las integraciones facilita el mantenimiento. Si una API externa cambia, solo se modifica su adaptador, sin tocar la lógica de negocio.' },
+            { id: 'ADR-004', title: 'Integración de Inteligencia Artificial (IA)', context: 'Se contempla añadir funcionalidades de IA a futuro, como un asistente virtual para agendar citas.', decision: 'La lógica de IA no se construirá internamente. Se integrará un <strong>servicio de IA externo</strong> (como Google AI, OpenAI) a través de su API.', consequences: 'Es más rápido y económico usar un servicio especializado que desarrollar modelos propios. La consecuencia es la dependencia de un proveedor externo.' },
+            { id: 'ADR-005', title: 'Flexibilidad para Cambios de Tecnología', context: 'La tecnología evoluciona. La arquitectura debe estar preparada para futuros cambios de frameworks o lenguajes.', decision: 'Se adoptará una <strong>arquitectura en capas</strong> (Presentación, Lógica de Negocio, Acceso a Datos) con responsabilidades claramente separadas.', consequences: 'Permite reemplazar una capa (ej. la interfaz de usuario) con un impacto mínimo en las demás, haciendo la aplicación más longeva y adaptable.' },
+            { id: 'ADR-006', title: 'Estrategia para Migraciones de Base de Datos', context: 'Podríamos necesitar cambiar de motor de base de datos en el futuro (ej. de MySQL a PostgreSQL).', decision: 'Se utilizará un <strong>Mapeador Objeto-Relacional (ORM)</strong> como Hibernate. Toda la interacción con la base de datos se hará a través del ORM.', consequences: 'Cambiar de BD se reduce a un cambio de configuración, en lugar de reescribir cientos de consultas. Aumenta drásticamente la mantenibilidad.' },
+            { id: 'ADR-007', title: 'Soporte para Múltiples Idiomas', context: 'La veterinaria está en una zona turística (Mallorca). La aplicación podría ser usada por personas que hablan diferentes idiomas.', decision: 'Se implementará una estrategia de <strong>internacionalización (i18n)</strong>. Los textos de la UI se guardarán en archivos de recursos externos (ej. <code>textos_es.json</code>).', consequences: 'Permite añadir nuevos idiomas sin modificar el código fuente, simplemente añadiendo un nuevo archivo de traducción.' },
+            { id: 'ADR-008', title: 'Funcionalidad de Búsqueda', context: 'Los usuarios necesitan una forma rápida de encontrar clientes, mascotas e historiales clínicos.', decision: 'Inicialmente, las búsquedas se realizarán con consultas a la BD sobre campos <strong>indexados</strong>. Se diseñará para poder integrar a futuro un motor de búsqueda especializado (ej. Elasticsearch).', consequences: 'Es la solución más simple y económica para las necesidades básicas, con una ruta de escalabilidad clara para búsquedas más potentes a futuro.' },
+            { id: 'ADR-009', title: 'Generación de Informes y Reportes', context: 'El sistema debe generar documentos como facturas y fórmulas médicas en formatos estándar como PDF.', decision: 'Se creará un <strong>módulo de reportes</strong> que usará una librería especializada (ej. JasperReports) y plantillas predefinidas.', consequences: 'Usar plantillas facilita modificar el diseño de los reportes sin tocar el código. Separar el módulo evita que la generación de reportes afecte el rendimiento.' },
+            { id: 'ADR-010', title: 'Conexión con Redes Sociales', context: 'Para facilitar el registro, se podría permitir a los usuarios usar sus cuentas de redes sociales (Google, Facebook).', decision: 'Se implementará el inicio de sesión social utilizando el protocolo estándar <strong>OAuth 2.0</strong> y los SDKs oficiales de cada plataforma.', consequences: 'OAuth 2.0 es el estándar de la industria. Mejora la experiencia de usuario y evita la responsabilidad de almacenar más contraseñas.' },
+            { id: 'ADR-011', title: 'Cumplimiento de Protección de Datos (GDPR)', context: 'El sistema manejará datos sensibles y debe cumplir con el <strong>Reglamento General de Protección de Datos (GDPR)</strong> de Europa.', decision: 'Se implementarán múltiples medidas: <strong>cifrado</strong> de datos, <strong>control de acceso</strong> por roles y funcionalidades para que los usuarios ejerzan sus <strong>derechos</strong> (exportar/eliminar datos).', consequences: 'El cumplimiento normativo es una obligación legal. Estas medidas protegen la privacidad, generan confianza y evitan sanciones severas.' },
+            { id: 'ADR-012', title: 'Inclusión y Accesibilidad', context: 'La aplicación debe ser usable por personas con discapacidades (visuales, motoras, etc.).', decision: 'La interfaz se desarrollará siguiendo las pautas de accesibilidad <strong>WCAG</strong> (contraste de color, navegación por teclado, texto alternativo, etc.).', consequences: 'Una aplicación accesible es un requisito ético y legal que, además, mejora la experiencia para todos los usuarios.' },
+            { id: 'ADR-013', title: 'Diseño Adaptable (Responsivo)', context: 'Los usuarios accederán desde computadores, tabletas y celulares.', decision: 'Se utilizará un enfoque de <strong>diseño responsivo</strong> con CSS Flexbox y Grid, permitiendo que la interfaz se adapte automáticamente al tamaño de la pantalla.', consequences: 'Garantiza una buena experiencia de usuario en cualquier dispositivo sin necesidad de desarrollar y mantener apps separadas, reduciendo costos.' },
+            { id: 'ADR-014', title: 'Manejo de Versiones del Código Fuente', context: 'Se necesita un sistema para controlar los cambios en el código, colaborar sin conflictos y mantener un historial estable.', decision: 'Se utilizará <strong>Git</strong> como sistema de control de versiones y un repositorio centralizado (GitHub). Se seguirá una estrategia de ramas como <strong>GitFlow</strong>.', consequences: 'Git es el estándar de la industria. Una estrategia de ramas organizada permite el desarrollo en paralelo y asegura que siempre haya una versión estable del código.' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const adrPanel = document.querySelector('.adr-panel');
+            const modal = document.getElementById('adrModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const closeButton = document.querySelector('.close-button');
+
+            // --- Tab Navigation ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetSection = document.querySelector(this.getAttribute('href'));
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+
+            // --- ADR Panel and Modal Logic ---
+            // Populate ADR panel
+            if (adrPanel) {
+                adrData.forEach(adr => {
+                    const card = document.createElement('div');
+                    card.className = 'adr-card';
+                    card.innerHTML = `<h4>${adr.id}</h4><p>${adr.title}</p>`;
+                    card.addEventListener('click', () => openModal(adr));
+                    adrPanel.appendChild(card);
+                });
+            }
+
+            function openModal(adr) {
+                modalTitle.textContent = `${adr.id}: ${adr.title}`;
+                modalBody.innerHTML = `
+                    <h4>Contexto</h4><p>${adr.context}</p>
+                    <h4>Decisión</h4><p>${adr.decision}</p>
+                    <h4>Justificación y Consecuencias</h4><div>${adr.consequences}</div>
+                `;
+                modal.style.display = 'block';
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+
+            closeButton.addEventListener('click', closeModal);
+            window.addEventListener('click', function (event) {
+                if (event.target == modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veterinaria MURO — Explicación Entrega 1</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav>
+    <h1>🐾 Veterinaria MURO</h1>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="clientes.html">Clientes</a></li>
+      <li><a href="explicacion.html">Explicación Entrega 1</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="section">
+      <h2>📘 Explicación Entrega 1</h2>
+      <p>Esta sección explica la lógica y estructura aplicadas en el desarrollo del módulo de gestión de clientes, incluyendo las capas implementadas, las tecnologías utilizadas y la razón de cada decisión técnica.</p>
+    </section>
+
+    <section class="section">
+      <h3>1. Lógica general aplicada</h3>
+      <p>El objetivo fue desarrollar una sección funcional aplicando el enfoque de arquitectura por capas, buscando mantener el código ordenado, escalable y fácil de mantener. Cada capa cumple un rol específico dentro del sistema, lo que permite modificar partes del proyecto sin afectar el resto.</p>
+    </section>
+
+    <section class="section">
+      <h3>2. Capas implementadas</h3>
+      <ul>
+        <li><b>Capa API:</b> Recibe las peticiones del usuario y maneja las rutas HTTP.</li>
+        <li><b>Capa de Aplicación:</b> Contiene la lógica del negocio y valida los datos antes de guardarlos.</li>
+        <li><b>Capa de Dominio:</b> Define las entidades y las interfaces principales del sistema.</li>
+        <li><b>Capa de Infraestructura:</b> Se encarga de guardar y consultar la información en la base de datos.</li>
+        <li><b>Capa Compartida:</b> Maneja errores globales y mensajes claros para el usuario.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>3. Tecnologías utilizadas</h3>
+      <p>El proyecto utiliza las siguientes herramientas y tecnologías:</p>
+      <ul>
+        <li><b>Java 21:</b> Lenguaje principal de desarrollo.</li>
+        <li><b>Spring Boot:</b> Framework para estructurar el proyecto por capas.</li>
+        <li><b>Spring Web:</b> Para manejar las solicitudes HTTP.</li>
+        <li><b>Spring Data JPA + H2:</b> Para la conexión y persistencia de datos.</li>
+        <li><b>HTML, CSS y JavaScript:</b> Para el desarrollo de la interfaz visual.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h3>4. Persistencia de datos</h3>
+      <p>Se configuró la base de datos H2 en modo archivo (<span class="code">jdbc:h2:file:./data/vetedb</span>) para garantizar que los datos se mantengan guardados incluso si se apaga el servidor o el computador.</p>
+    </section>
+
+    <section class="section">
+      <h3>5. Conclusión</h3>
+      <p>Con esta entrega se demuestra el entendimiento del modelo por capas, la separación de responsabilidades y la integración entre el backend (Java con Spring Boot) y el frontend (HTML, CSS y JS). Además, se añadió esta sección explicativa como aporte extra, mostrando la documentación del proyecto directamente dentro de la plataforma.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Veterinaria MURO — Proyecto académico de Arquitectura de Software</p>
+  </footer>
+</body>
+</html>

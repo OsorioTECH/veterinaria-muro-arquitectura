@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documento de Arquitectura - Software Veterinaria Muro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      background-color: #f8f9fa;
+      color: #343a40;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 225px;
+      background-color: #212529;
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar summary {
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      color: #ffc107;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin: 10px 0;
+    }
+
+    .sidebar a {
+      color: #adb5bd;
+      text-decoration: none;
+      font-size: 0.95em;
+    }
+
+    .sidebar a:hover {
+      color: #fff;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 260px;
+      padding: 30px;
+      max-width: 900px;
+    }
+
+    header {
+      border-bottom: 3px solid #007bff;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.2em;
+      color: #007bff;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      color: #6c757d;
+    }
+
+    summary {
+      margin-top: 40px;
+      color: #17a2b8;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 6px;
+    }
+
+    h3 {
+      color: #28a745;
+      margin-top: 20px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .highlight-box {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-left: 6px solid #ffc107;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+
+    .diagram {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .diagram img {
+      max-width: 100%;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+    }
+
+    footer {
+      margin-top: 50px;
+      padding-top: 15px;
+      border-top: 1px solid #dee2e6;
+      font-size: 0.9em;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    /* Estilos generales para todas las secciones con id="seccion-1" */
+    details#seccion-1 summary {
+      font-family: 'Georgia', serif;
+      color: #17a2b8;
+      font-size: 1.3em;
+      font-weight: bold;
+      background-color: #e3f2fd;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    /* Estilos generales para todas las secciones con id="seccion-2" */
+    details#seccion-2 summary {
+      font-family: 'Trebuchet MS', Arial, sans-serif;
+      color: #28a745;
+      font-size: 1.2em;
+      font-style: italic;
+      background-color: #fff0e6;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+
+    /* Estilos generales para todas las secciones con id="seccion-3" */
+    details#seccion-3 summary {
+      font-family: 'Verdana', Geneva, Tahoma, sans-serif;
+      color: #c82333;
+      font-size: 1.15em;
+      font-weight: 600;
+      background-color: #f8d7da;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border-left: 5px solid #c82333;
+    }
+
+    /* Estilos generales para todas las secciones con id="seccion-4" */
+    details#seccion-4 summary {
+      font-family: 'Courier New', Courier, monospace;
+      color: #007bff;
+      font-size: 1.05em;
+      font-weight: bold;
+      background-color: #e3f2fd;
+      padding: 8px 12px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <summary>Contenido</summary>
+    <ul>
+      <li><a href="#problema">1. Justificación y Problema</a></li>
+      <li><a href="#modelo-desarrollo">2. Modelo de Desarrollo</a></li>
+      <li><a href="#requisitos-funcionales">3. Requisitos Funcionales</a></li>
+      <li><a href="#requisitos-no-funcionales">4. Requisitos No Funcionales</a></li>
+      <li><a href="#alcance-restricciones">5. Alcance y Restricciones</a></li>
+      <li><a href="#involucrados">6. Involucrados y Preocupaciones</a></li>
+      <li><a href="#diseno-arquitectonico">7. Diseño Arquitectónico</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main content -->
+  <div class="main">
+    <header>
+      <h1>Documento de Arquitectura de Software</h1>
+      <p>Proyecto: Aplicación Veterinaria "Muro"</p>
+    </header>
+
+    <details id="seccion-1">
+      <summary>1. Justificación y Problema a Resolver</summary>
+      <div class="highlight-box">
+        <p>
+          Actualmente, la "Veterinaria Muro" gestiona su información de forma manual, lo que ocasiona retrasos,
+          pérdida de tiempo, inconsistencias en los datos y molestias a los clientes.
+        </p>
+        <p>
+          El objetivo principal es <strong>diseñar una aplicación que automatice y centralice la gestión de historias
+            clínicas, citas y facturación</strong>, mejorando la calidad del servicio y posicionando a la veterinaria
+          en un nivel competitivo.
+        </p>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>2. Modelo de Desarrollo Propuesto</summary>
+      <div class="highlight-box">
+        <h3>Metodología Ágil (Scrum)</h3>
+        <ul>
+          <li><strong>Flexibilidad:</strong> Permite incorporar cambios de requisitos durante el desarrollo.</li>
+          <li><strong>Entregas parciales:</strong> Cada Sprint produce una funcionalidad usable (ej: módulo de citas).
+          </li>
+          <li><strong>Colaboración:</strong> El cliente participa activamente con retroalimentación continua.</li>
+          <li><strong>Reducción de riesgos:</strong> Problemas se detectan temprano en ciclos cortos.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>3. Requisitos Funcionales</summary>
+      <div class="highlight-box">
+        <ul>
+          <li>Gestión de Mascotas</li>
+          <li>Gestión de Clientes</li>
+          <li>Gestión de Veterinarios</li>
+          <li>Gestión de Citas</li>
+          <li>Gestión de Servicios y Facturación</li>
+          <li>Gestión de Exámenes Clínicos</li>
+          <li>Administración de Usuarios y Perfiles</li>
+          <li>Generación de Informes</li>
+          <li>Consultas: historial clínico, ventas, citas programadas</li>
+        </ul>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>4. Requisitos No Funcionales (FURPS+)</summary>
+      <div class="highlight-box">
+        <h3>Usabilidad</h3>
+        <ul>
+          <li>Interfaz intuitiva y sencilla</li>
+          <li>Colores claros y accesibilidad para personas con problemas visuales</li>
+          <li>Diseño responsive</li>
+        </ul>
+        <h3>Confiabilidad</h3>
+        <ul>
+          <li>Disponible 24/7</li>
+          <li>Consistencia en la base de datos</li>
+          <li>Copia de seguridad automática</li>
+        </ul>
+        <h3>Rendimiento</h3>
+        <ul>
+          <li>Respuestas rápidas</li>
+          <li>Carga de interfaz eficiente</li>
+        </ul>
+        <h3>Soportabilidad</h3>
+        <ul>
+          <li>Documentación PDF y manuales</li>
+          <li>Capacitación a usuarios</li>
+        </ul>
+        <h3>Restricciones</h3>
+        <ul>
+          <li>Lenguaje de desarrollo: Java</li>
+          <li>Repositorio: GitHub</li>
+          <li>Aplicación web</li>
+          <li>Contraseñas encriptadas y auditoría de operaciones</li>
+        </ul>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>5. Alcance y Restricciones del Sistema</summary>
+      <div class="highlight-box">
+        <h3>Alcance</h3>
+        <ul>
+          <li><strong>Incluye:</strong> Gestión de clientes, mascotas, citas, facturación, servicios, exámenes clínicos,
+            historial médico e informes.</li>
+          <li><strong>No incluye:</strong> Integraciones externas, aplicaciones móviles nativas ni telemedicina.</li>
+        </ul>
+        <h3>Restricciones</h3>
+        <ul>
+          <li>Uso de Java y frameworks compatibles</li>
+          <li>Infraestructura de bajo costo</li>
+          <li>Acceso vía web</li>
+        </ul>
+        <h3>Suposiciones</h3>
+        <ul>
+          <li>Conexión a Internet estable</li>
+          <li>Personal capacitado en informática básica</li>
+          <li>Clientes con acceso a dispositivos con navegador</li>
+        </ul>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>6. Involucrados y Preocupaciones</summary>
+      <div class="highlight-box">
+        <ul>
+          <li><strong>Veterinario (Cliente):</strong> confiabilidad, calidad del servicio, reducción de tiempos.</li>
+          <li><strong>Auxiliar/Secretaria:</strong> facilidad de uso, eficiencia en gestión de citas.</li>
+          <li><strong>Clientes (Dueños de mascotas):</strong> rapidez en agendamiento, seguridad de datos.</li>
+          <li><strong>Administrador del sistema:</strong> seguridad, disponibilidad, respaldo de datos.</li>
+          <li><strong>Equipo de desarrollo:</strong> factibilidad técnica, cumplimiento de plazos.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details id="seccion-1">
+      <summary>7. Diseño Arquitectónico</summary>
+      <div class="highlight-box">
+        <details id="seccion-3">
+          <summary>7.1 Racional Arquitectónico</summary>
+          <p><strong>Estilo elegido:</strong> Arquitectura en Capas</p>
+          <p>
+            <strong>Justificación:</strong> Separación modular facilita el mantenimiento y escalabilidad.
+            Se contemplan capas de Presentación, Lógica de Negocio y Datos.
+          </p>
+          <h4>Decisiones Clave</h4>
+          <ul>
+            <li>Lenguaje: Java</li>
+            <li>Base de datos: MySQL/MariaDB</li>
+            <li>Framework: Spring Boot</li>
+            <li>Gestión de versiones: GitHub</li>
+          </ul>
+        </details>
+
+        <details id="seccion-3">
+          <summary>7.2 Vistas Arquitectónicas</summary>
+          <details id="seccion-4">
+            <summary>Vista Lógica (Componentes)</summary>
+            <p>Componentes principales: Clientes, Mascotas, Citas, Servicios, Facturación, Exámenes, Informes,
+              Administración.
+            </p>
+            <div class="diagram">
+              <img src="img/diagrama-componentes.jpg" alt="Diagrama de Componentes">
+            </div>
+          </details>
+
+          <details id="seccion-4">
+            <summary>Vista de Proceso</summary>
+            <p>Ejemplo: Flujo de asignación de citas.</p>
+            <div class="diagram">
+              <img src="img/diagrama-secuencia.png" alt="Diagrama de Secuencia">
+            </div>
+          </details>
+
+          <details id="seccion-4">
+            <summary>Vista de Despliegue</summary>
+            <p>El sistema se despliega en un servidor con base de datos MySQL y acceso vía web desde PCs/tablets.</p>
+            <div class="diagram">
+              <img src="img/vista-despliegue.png" alt="Diagrama de Despliegue">
+            </div>
+          </details>
+        </details>
+
+        <details id="seccion-3">
+          <summary>7.3 Decisiones Arquitectónicas (ADR)</summary>
+
+          <details id="seccion-4">
+            <summary>ADR-001 – Seguridad de Datos</summary>
+            <p><strong>Contexto:</strong> La aplicación maneja información sensible de clientes y mascotas (datos
+              personales e historial clínico). Es necesario garantizar confidencialidad e integridad.</p>
+            <p><strong>Decisión:</strong> Implementar encriptación de contraseñas con bcrypt y comunicación segura
+              mediante HTTPS/TLS.</p>
+            <p><strong>Consecuencias:</strong></p>
+            <ul>
+              <li><strong>Positivo:</strong> Mayor protección frente a ataques de terceros.</li>
+              <li><strong>Negativo:</strong> Sobrecarga mínima en rendimiento por encriptación y certificados.</li>
+            </ul>
+          </details>
+
+          <details id="seccion-4">
+            <summary>ADR-002 – Rendimiento y Respuesta Rápida</summary>
+            <p><strong>Contexto:</strong> El sistema debe soportar múltiples usuarios consultando y registrando
+              información en tiempo real sin retrasos.</p>
+            <p><strong>Decisión:</strong> Uso de caché en consultas frecuentes (ej. historial de mascotas) y
+              optimización
+              de consultas SQL con índices.</p>
+            <p><strong>Consecuencias:</strong></p>
+            <ul>
+              <li><strong>Positivo:</strong> Reducción significativa de tiempos de respuesta.</li>
+              <li><strong>Negativo:</strong> Riesgo de desactualización si el caché no se invalida correctamente.</li>
+            </ul>
+          </details>
+
+          <details id="seccion-4">
+            <summary>ADR-003 – Escalabilidad</summary>
+            <p><strong>Contexto:</strong> Se proyecta un crecimiento en la cantidad de clientes y consultas conforme la
+              veterinaria expanda sus servicios.</p>
+            <p><strong>Decisión:</strong> Adoptar arquitectura en capas con separación clara de responsabilidades y
+              posibilidad futura de migrar a microservicios.</p>
+            <p><strong>Consecuencias:</strong></p>
+            <ul>
+              <li><strong>Positivo:</strong> Facilita la incorporación de nuevos módulos (ej. telemedicina).</li>
+              <li><strong>Negativo:</strong> Requiere mayor esfuerzo inicial en diseño para modularidad.</li>
+            </ul>
+          </details>
+
+          <details id="seccion-4">
+            <summary>ADR-004 – Mantenibilidad</summary>
+            <p><strong>Contexto:</strong> El sistema será utilizado a largo plazo, con probables cambios en requisitos
+              funcionales.</p>
+            <p><strong>Decisión:</strong> Uso de Spring Boot con patrones de diseño (DAO, MVC) y documentación de
+              código.
+            </p>
+            <p><strong>Consecuencias:</strong></p>
+            <ul>
+              <li><strong>Positivo:</strong> Facilidad de adaptación a cambios, incorporación de nuevos desarrolladores.
+              </li>
+              <li><strong>Negativo:</strong> Aumento inicial en la curva de aprendizaje para el equipo.</li>
+            </ul>
+          </details>
+
+        </details>
+      </div>
+
+    </details>
+
+
+    <footer>
+      <p>Documento de Arquitectura - Proyecto Veterinaria Muro (Académico)</p>
+    </footer>
+  </div>
+</body>
+
+</html>

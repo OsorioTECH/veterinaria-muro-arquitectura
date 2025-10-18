@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entrega 1 - Arquitectura por Capas | Veterinaria Muro (Lenguaje Claro)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #64748b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: Inter, "Segoe UI", Roboto, Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: #0f172a;
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      width: 300px;
+      background: #0b1226;
+      color: #e2e8f0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .brand {
+      padding: 20px;
+      border-bottom: 1px solid #1f2a44
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #fff
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: #94a3b8
+    }
+
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 8px 0
+    }
+
+    .menu a {
+      display: block;
+      padding: 10px 18px;
+      text-decoration: none;
+      color: #cbd5e1;
+      border-left: 3px solid transparent;
+      font-size: 14px;
+    }
+
+    .menu a:hover {
+      background: #0f1a37;
+      color: #fff
+    }
+
+    .menu a.active {
+      background: #0d1630;
+      color: #fff;
+      border-left-color: var(--primary)
+    }
+
+    main {
+      flex: 1;
+      padding: 28px 34px;
+      overflow: auto
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--primary)
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 14px rgba(2, 6, 23, .06);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px
+    }
+
+    @media(min-width:900px) {
+      .grid.cols-2 {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .grid.cols-3 {
+        grid-template-columns: 1fr 1fr 1fr
+      }
+    }
+
+    .code {
+      font-family: var(--mono);
+      background: #0b1226;
+      color: #d8e6ff;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      font-size: 13px
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #0f172a
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #e0ecff;
+      color: #1e40af;
+      margin-right: 6px
+    }
+
+    .muted {
+      color: #475569
+    }
+
+    .diagram {
+      background: #0b1226;
+      color: #e3f2fd;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: var(--mono);
+      white-space: pre;
+      overflow: auto;
+      font-size: 13px;
+      border: 1px solid #16244a;
+    }
+
+    .tip {
+      border-left: 4px solid var(--primary);
+      background: #e8f1ff;
+      color: #0f172a;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 14px
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 6px;
+      background: #eef2f7;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-right: 6px
+    }
+
+    .def {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin: 6px 0;
+      font-size: 14px
+    }
+
+    .checklist li {
+      margin-bottom: 6px
+    }
+
+    .foot {
+      font-size: 12px;
+      color: #64748b
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 8px;
+      font-size: 14px
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .badge.ok {
+      color: var(--ok);
+      border-color: #bbf7d0;
+      background: #ecfdf5
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const links = document.querySelectorAll('.menu a');
+      const sections = document.querySelectorAll('section');
+      links.forEach(l => {
+        l.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = l.getAttribute('href').replace('#', '');
+          links.forEach(a => a.classList.remove('active'));
+          l.classList.add('active');
+          sections.forEach(s => s.style.display = (s.id === id ? 'block' : 'none'));
+          history.pushState(null, '', '#' + id);
+        });
+      });
+      const initial = location.hash?.replace('#', '') || 'vision';
+      document.querySelector('.menu a[href="#' + initial + '"]')?.click();
+    });
+  </script>
+</head>
+
+<body>
+  <nav>
+    <div class="brand">
+      <h1>Veterinaria Muro</h1>
+      <p>Entrega 1 · Arquitectura por Capas (explicada fácil)</p>
+    </div>
+    <ul class="menu">
+      <li><a href="#vision" class="active">1. Visión y Stack</a></li>
+      <li><a href="#capas">2. Arquitectura por Capas</a></li>
+      <li><a href="#dominio">3. Entidades de Dominio</a></li>
+      <li><a href="#persistencia">4. Persistencia y BD</a></li>
+      <li><a href="#repos">5. Repositorios</a></li>
+      <li><a href="#presentacion">6. Presentación (API)</a></li>
+      <li><a href="#estructura">7. Estructura del Proyecto</a></li>
+      <li><a href="#adrs">8. Decisiones (ADRs)</a></li>
+      <li><a href="#calidad">9. Calidad y Seguridad</a></li>
+      <li><a href="#checklist">10. Checklist</a></li>
+    </ul>
+  </nav>
+  <main>
+    <section id="vision">
+      <h2>1. Visión y selección tecnológica</h2>
+      <div class="card">
+        <p>Se construirá una aplicación web para la clínica veterinaria: registrar clientes, mascotas, citas, servicios,
+          exámenes y facturas. La idea es que sea muy rápida, segura, fácil de mantener y que podamos desarrollarla sin
+          enredarnos con demasiada programación innecesaria.</p>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Stack elegido</h3>
+            <ul>
+              <li><span class="pill">Backend</span> Java 17 + Spring Boot 3.x
+                <div class="def"><strong>Qué es:</strong> “Spring Boot” es un marco que nos ahorra mucho código repetido
+                  al crear APIs en Java. <strong>Traducción:</strong> nos deja avanzar más rápido con menos dolor.</div>
+              </li>
+              <li><span class="pill">Base de datos (Producción)</span> PostgreSQL 15
+                <div class="def"><strong>Qué es:</strong> una base de datos robusta y gratuita.
+                  <strong>Traducción:</strong> guarda datos ordenados y confiables.
+                </div>
+              </li>
+              <li><span class="pill">Base de datos (Desarrollo)</span> H2 en memoria
+                <div class="def"><strong>Qué es:</strong> una base de datos “rápida de prueba” que vive en la memoria
+                  del computador. <strong>Traducción:</strong> ideal para desarrollar sin instalar nada complejo.</div>
+              </li>
+              <li><span class="pill">Documentación API</span> Swagger/OpenAPI (springdoc)
+                <div class="def"><strong>Qué es:</strong> genera una página interactiva para probar la API.
+                  <strong>Traducción:</strong> podemos ver y probar los endpoints en el navegador sin usar otras
+                  herramientas.
+                </div>
+              </li>
+              <li><span class="pill">Seguridad</span> Spring Security con JWT y roles
+                <div class="def"><strong>Qué es:</strong> protege la API con inicios de sesión y permisos.
+                  <strong>Traducción:</strong> solo quien debe, puede ver o cambiar información.
+                </div>
+              </li>
+              <li><span class="pill">Control de versiones</span> Git + GitHub
+                <div class="def"><strong>Qué es:</strong> historial y respaldo del código. <strong>Traducción:</strong>
+                  si nos equivocamos, podemos volver atrás.</div>
+              </li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>¿Por qué este stack?</h3>
+            <ul>
+              <li>Avanzamos rápido: Spring Boot quita mucha configuración manual.</li>
+              <li>Calidad de entrada: validaciones, seguridad y pruebas bien soportadas.</li>
+              <li>Buen rendimiento: PostgreSQL es veloz y estable; H2 acelera el desarrollo local.</li>
+              <li>Fácil de mantener: todo organizado por capas y con decisiones registradas.</li>
+              <li>Listo para crecer: luego podemos dividir en módulos o microservicios si hace falta.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capas" style="display:none">
+      <h2>2. Arquitectura por capas (la organización de la casa)</h2>
+      <div class="card">
+        <p>Dividimos el sistema en “pisos” (capas). Cada capa tiene su rol. Esto nos ayuda a entender mejor el código, a
+          probar partes por separado y a cambiar una cosa sin dañar todo.</p>
+        <div class="diagram">
+          [Cliente / Navegador]
+          │
+          ▼
+          Capa de Presentación (Controladores REST y DTOs: reciben y devuelven datos)
+          │
+          ▼
+          Capa de Aplicación (Casos de uso: la orquesta que coordina la lógica)
+          │
+          ▼
+          Capa de Dominio (Reglas del negocio: entidades y validaciones de fondo)
+          │
+          ▼
+          Capa de Infraestructura (Guardado en BD, repositorios, configuraciones)
+        </div>
+        <div class="grid cols-2" style="margin-top:10px">
+          <div class="card">
+            <h3>Qué hace cada capa</h3>
+            <ul>
+              <li><strong>Presentación:</strong> expone la API, valida lo que llega y lo que sale. No contiene reglas de
+                negocio.</li>
+              <li><strong>Aplicación:</strong> ejecuta casos de uso (por ejemplo, “agendar cita”), maneja transacciones.
+              </li>
+              <li><strong>Dominio:</strong> es el corazón: entidades como Cliente, Mascota, Cita y sus reglas.</li>
+              <li><strong>Infraestructura:</strong> cómo guardamos, leemos y configuramos cosas (BD, seguridad, etc.).
+              </li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Beneficios</h3>
+            <ul>
+              <li>Más fácil de entender y cambiar.</li>
+              <li>Podemos probar cada parte sin depender de todo lo demás.</li>
+              <li>Si un día cambiamos de base de datos o de framework, el impacto es menor.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="def"><strong>REST:</strong> una forma estándar de crear APIs en la web. <strong>DTO:</strong>
+          “paquetes” de datos que enviamos o recibimos por la API.</div>
+      </div>
+    </section>
+
+    <section id="dominio" style="display:none">
+      <h2>3. Entidades de dominio (qué cosas existen en nuestro negocio)</h2>
+      <div class="card">
+        <p>Estas son las “piezas” principales que maneja la veterinaria. Estas seran las tablas en la BD y las clases en
+          el código.</p>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Modelo base</h3>
+            <ul>
+              <li>Cliente: id, cédula, nombre, apellidos, dirección, email, teléfono.</li>
+              <li>Mascota: id, nombre, fechaNacimiento, especie, raza, sexo, propietario (Cliente).</li>
+              <li>Veterinario: id, cédula, nombre, apellidos, teléfono, email.</li>
+              <li>Cita: id, fechaHora, estado, motivo, cliente, mascota, veterinario.</li>
+              <li>Servicio: id, nombre, duración (min), precioBase.</li>
+              <li>ExamenClinico: id, mascota, veterinario, fechaHora, resultados, observaciones.</li>
+              <li>Factura: id, fechaHoraPago, total, medioPago, cliente, atendidoPor (veterinario).</li>
+              <li>Usuario: id, nombre, apellido, email, contraseñaEncriptada, rol.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Reglas sencillas</h3>
+            <ul>
+              <li>Cada Mascota tiene un dueño (Cliente).</li>
+              <li>Una Cita une a Cliente, Mascota y Veterinario. Evitamos traslapar citas del mismo veterinario.</li>
+              <li>Una Factura puede tener varios ítems (servicios) y el total se calcula.</li>
+              <li>Usuario maneja el inicio de sesión y permisos (ADMIN, VET, AUX, CLIENTE).</li>
+            </ul>
+          </div>
+        </div>
+        <details>
+          <summary>Diagrama lógico rápido</summary>
+          <div class="diagram">
+            Cliente (id, cedula, nombre, apellidos, direccion, email, telefono)
+            1 ─── * Mascota (id, nombre, fechaNacimiento, especie, raza, sexo, cliente_id)
+
+            Veterinario (id, cedula, nombre, apellidos, telefono, email)
+
+            Cita (id, fechaHora, estado, motivo, cliente_id, mascota_id, veterinario_id)
+            Regla: no traslapar por (veterinario_id, rangoFechaHora)
+
+            Servicio (id, nombre, duracionMin, precioBase)
+
+            ExamenClinico (id, mascota_id, veterinario_id, fechaHora, resultadosJSON, observaciones)
+
+            Factura (id, fechaHoraPago, total, medioPago, cliente_id, atendidoPor_vet_id)
+            FacturaItem (id, factura_id, servicio_id, cantidad, precioUnit, subtotal)
+          </div>
+        </details>
+        <div class="def"><strong>Resultados JSON:</strong> guardamos algunos resultados de examen en formato flexible
+          tipo “diccionario” (clave-valor), útil cuando cambian los campos.</div>
+      </div>
+    </section>
+
+    <section id="persistencia" style="display:none">
+      <h2>4. Persistencia y base de datos (dónde y cómo guardamos)</h2>
+      <div class="card">
+        <p>
+          Guardar los datos bien es clave: deben ser seguros, consistentes y rápidos de consultar. Usaremos dos bases:
+          una para trabajar rápido en tu máquina mientras desarrollas (H2, liviana y en memoria) y otra “seria” para
+          producción (PostgreSQL, estable y potente).
+          Para cambiar entre una y otra, activamos “perfiles” (modos) en la configuración.
+        </p>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Perfiles de ejecución y configuración (application.yml)</h3>
+            <p class="muted">Este archivo le dice a la app cómo conectarse a la base de datos según el modo: dev
+              (desarrollo) o prod (producción).</p>
+            <div class="code">
+              spring:
+              datasource:
+              url: jdbc:h2:mem:vete;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+              username: sa
+              password:
+              jpa:
+              hibernate:
+              ddl-auto: update
+              show-sql: true
+              properties:
+              hibernate.format_sql: true
+              profiles:
+              active: dev
+
+              ---
+              spring:
+              config:
+              activate:
+              on-profile: prod
+              datasource:
+              url: jdbc:postgresql://db:5432/vete
+              username: vete_app
+              password: ${DB_PASSWORD}
+              jpa:
+              hibernate:
+              ddl-auto: validate
+              properties:
+              hibernate.jdbc.lob.non_contextual_creation: true
+              management:
+              endpoints.web.exposure.include: health,info
+            </div>
+
+            <div class="def"><strong>Perfil:</strong> “modo” de ejecución. <em>dev</em> (desarrollo) usa H2 para ir
+              rápido; <em>prod</em> (producción) usa PostgreSQL para estabilidad.</div>
+            <div class="def"><strong>H2 en memoria:</strong> no requiere instalación, arranca en segundos; ideal para
+              pruebas locales.</div>
+            <div class="def"><strong>MODE=PostgreSQL:</strong> hace que H2 se comporte parecido a PostgreSQL, evitando
+              sorpresas al pasar a producción.</div>
+            <div class="def"><strong>ddl-auto:</strong> controla cómo se crean/actualizan tablas. En <em>dev</em>
+              “update” agiliza cambios; en <em>prod</em> “validate” evita cambios automáticos peligrosos.</div>
+            <div class="def"><strong>${DB_PASSWORD}:</strong> variable de entorno. Nunca pongas contraseñas reales
+              dentro del repositorio.</div>
+
+            <details>
+              <summary>¿Cómo activo un perfil?</summary>
+              <div class="def"><strong>Maven/Java:</strong> agregar <span
+                  class="tag">-Dspring.profiles.active=dev</span> o <span class="tag">prod</span> al ejecutar.</div>
+              <div class="def"><strong>IDE:</strong> en “Run/Debug Configurations”, agrega el perfil activo.</div>
+            </details>
+          </div>
+
+          <div class="card">
+            <h3>Dependencias necesarias (pom.xml)</h3>
+            <p class="muted">Estas dependencias son necesarias para habilitar la web, la conexión con la base de datos y
+              la documentación de la
+              API.</p>
+            <div class="code">
+              &lt;dependencies&gt;
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+              &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+              &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+              &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+              &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+              &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+              &lt;version&gt;2.5.0&lt;/version&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;com.h2database&lt;/groupId&gt;
+              &lt;artifactId&gt;h2&lt;/artifactId&gt;
+              &lt;scope&gt;runtime&lt;/scope&gt;
+              &lt;/dependency&gt;
+
+              &lt;dependency&gt;
+              &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+              &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+              &lt;scope&gt;runtime&lt;/scope&gt;
+              &lt;/dependency&gt;
+              &lt;/dependencies&gt;
+            </div>
+
+            <div class="def"><strong>Spring Web:</strong> crea APIs HTTP.</div>
+            <div class="def"><strong>Spring Data JPA:</strong> mapea clases a tablas sin escribir SQL todo el tiempo
+              (ORM).</div>
+            <div class="def"><strong>Validation:</strong> valida datos de entrada (por ejemplo, emails correctamente
+              formados).</div>
+            <div class="def"><strong>Security:</strong> proteger endpoints (login, roles).</div>
+            <div class="def"><strong>OpenAPI/Swagger:</strong> documentación y pruebas de la API desde el navegador.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Esquema de tablas e índices resumidamente propuesto</h3>
+          <p class="muted">Un buen diseño en BD acelera consultas y evita datos incoherentes. Por lo que esta seccion es
+            de vital importancia para el proyecto. Este es un esquema de las tablas y sus relaciones.</p>
+          <div class="diagram">
+            Cliente(id PK, cedula UNIQUE, nombre, apellidos, direccion, email UNIQUE, telefono)
+            Mascota(id PK, nombre, fecha_nacimiento, especie, raza, sexo, cliente_id FK -> Cliente.id)
+            Veterinario(id PK, cedula UNIQUE, nombre, apellidos, telefono, email UNIQUE)
+            Servicio(id PK, nombre UNIQUE, duracion_min, precio_base)
+            Cita(id PK, fecha_hora, estado, motivo, cliente_id FK, mascota_id FK, veterinario_id FK)
+            ExamenClinico(id PK, mascota_id FK, veterinario_id FK, fecha_hora, resultados_json, observaciones)
+            Factura(id PK, fecha_hora_pago, total, medio_pago, cliente_id FK, atendido_por_vet_id FK)
+            FacturaItem(id PK, factura_id FK, servicio_id FK, cantidad, precio_unit, subtotal)
+
+            Índices sugeridos:
+            - Cliente(cedula), Cliente(email)
+            - Veterinario(cedula), Veterinario(email)
+            - Cita(fecha_hora), Cita(veterinario_id, fecha_hora)
+            - Mascota(cliente_id), Mascota(nombre)
+          </div>
+          <div class="def"><strong>PK (Primary Key):</strong> identifica de forma única una fila.</div>
+          <div class="def"><strong>FK (Foreign Key):</strong> relaciona tablas y mantiene coherencia.</div>
+          <div class="def"><strong>Índice:</strong> acelera búsquedas en columnas usadas con frecuencia.</div>
+        </div>
+
+        <div class="card">
+          <h3>Buenas prácticas de persistencia (estas son muy importantes tenerlas claras desde el inicio, ya que nos
+            evitaran problemas en el futuro en cuestiones como la seguridad, la integracion con otras aplicaciones, la
+            pérdida de datos por migraciones mal gestionadas, el bajo rendimiento en consultas por falta de índices y la
+            dificultad de mantenimiento por esquemas inconsistentes, etc.)</h3>
+          <ul>
+            <li>Usa <strong>paginación</strong> en listados grandes (por ejemplo, citas del mes).</li>
+            <li>Define <strong>índices</strong> en campos que consultas seguido (cédula, fecha de cita).</li>
+            <li>Maneja <strong>transacciones</strong> en casos de uso que afectan varias tablas (crear factura + ítems).
+            </li>
+            <li>No expongas entidades JPA directamente en la API: usa <strong>DTOs</strong>.</li>
+            <li>En producción, usa <strong>migraciones</strong> (Flyway o Liquibase) en vez de ddl-auto=update.</li>
+            <li>Configura <strong>pool de conexiones</strong> (HikariCP viene por defecto) con tamaños razonables.</li>
+          </ul>
+          <details>
+            <summary>Ejemplo básico de conexión con variables de entorno</summary>
+            <div class="code">
+              SPRING_PROFILES_ACTIVE=prod
+              DB_PASSWORD=una_password_segura
+              SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/vete
+              SPRING_DATASOURCE_USERNAME=vete_app
+              SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+            </div>
+          </details>
+        </div>
+
+        <div class="tip">
+          <strong>Resumen práctico:</strong> en tu día a día desarrolla con H2 (rápido), valida el modelo; para
+          producción usa PostgreSQL
+          con migraciones y variables de entorno.
+          Así ganas velocidad sin perder calidad ni seguridad.
+          <br>
+          <br>
+          <strong>Nota:</strong> estas son las buenas prácticas que se deben tener en cuenta para el proyecto segun el
+          analisis realizado por nuestro equipo o grupo.
+        </div>
+      </div>
+    </section>
+
+    <section id="repos" style="display:none">
+      <h2>5. Repositorios (la capa que se comunica con la base de datos)</h2>
+      <div class="card">
+        <p>Un “repositorio” es como un asistente especializado en guardar y leer una entidad. Con Spring Data JPA, solo
+          creamos una interfaz y este se encargara de la persistencia de los datos. Se planteo la creacion de
+          repositorios para cada entidad, ya que es una buena practica y nos permite tener un codigo mas limpio y
+          mantenible.</p>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Ejemplos de repositorios</h3>
+            <div class="code">
+              // Dominio (simplificado)
+              @Entity class Cliente { @Id @GeneratedValue Long id; String cedula; String nombre; String apellidos;
+              String email; }
+
+              // Infraestructura - Repositorios
+              public interface ClienteRepository extends JpaRepository&lt;Cliente, Long&gt; {
+              Optional&lt;Cliente&gt; findByCedula(String cedula);
+              boolean existsByEmail(String email);
+              }
+
+              public interface MascotaRepository extends JpaRepository&lt;Mascota, Long&gt; {
+              List&lt;Mascota&gt; findByPropietarioId(Long clienteId);
+              }
+
+              public interface CitaRepository extends JpaRepository&lt;Cita, Long&gt; {
+              @Query("select count(c)>0 from Cita c where c.veterinario.id=:vetId and c.fechaHora between :inicio and
+              :fin and c.estado&lt;&gt; 'CANCELADA'")
+              boolean existeSolape(@Param("vetId") Long vetId, @Param("inicio") LocalDateTime inicio, @Param("fin")
+              LocalDateTime fin);
+              }
+            </div>
+            <div class="def"><strong>JpaRepository:</strong> nos da gratis métodos como guardar, buscar por id, listar,
+              borrar, etc.</div>
+          </div>
+          <div class="card">
+            <h3>Transacciones y reglas</h3>
+            <div class="code">
+              @Service
+              public class AgendaCitasService {
+              private final CitaRepository citas;
+              public AgendaCitasService(CitaRepository citas){ this.citas = citas; }
+
+              @Transactional
+              public Cita agendar(AgendarCitaCmd cmd){
+              if (citas.existeSolape(cmd.veterinarioId(), cmd.inicio(), cmd.fin())){
+              throw new NegocioException("Cita solapada");
+              }
+              Cita c = Cita.crear(cmd);
+              return citas.save(c);
+              }
+              }
+            </div>
+            <div class="def"><strong>@Transactional:</strong> asegura que el bloque completo se guarda como una unidad.
+              Si algo falla, se revierte.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="presentacion" style="display:none">
+      <h2>6. Capa de presentación (API REST con datos claros)</h2>
+      <div class="card">
+        <p>La API es la “puerta” por donde otras aplicaciones (o nuestro futuro frontend) hablan con el sistema.
+          Enviamos y recibimos datos con formatos simples (JSON).</p>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Controlador REST</h3>
+            <div class="code">
+              @RestController
+              @RequestMapping("/api/clientes")
+              @RequiredArgsConstructor
+              class ClienteController {
+              private final ClienteAppService app;
+
+              @PostMapping
+              public ResponseEntity&lt;ClienteDto&gt; crear(@Valid @RequestBody CrearClienteDto dto){
+              return ResponseEntity.status(HttpStatus.CREATED).body(app.crear(dto));
+              }
+
+              @GetMapping("/{id}")
+              public ClienteDto byId(@PathVariable Long id){ return app.buscar(id); }
+              }
+            </div>
+            <div class="def"><strong>Controller:</strong> recibe la petición, valida y pasa el trabajo a la capa de
+              aplicación.</div>
+          </div>
+          <div class="card">
+            <h3>DTOs y validaciones</h3>
+            <div class="code"> public record CrearClienteDto( @NotBlank String cedula, @NotBlank String nombre,
+              @NotBlank String apellidos, @Email String email, String telefono, String direccion ) {}
+              public record ClienteDto(
+              Long id,
+              String cedula,
+              String nombre,
+              String apellidos,
+              String email
+              ) {}
+
+            </div>
+            <div class="def"> <strong>¿Qué es un DTO?</strong> DTO significa “Data Transfer Object” (Objeto de
+              Transferencia de Datos). Es un objeto simple que usamos para enviar y recibir datos por la API. No tiene
+              lógica de negocio, solo campos. <strong>¿Para qué?</strong> Para no exponer directamente las entidades
+              internas de la base de datos y así mantener el sistema más seguro y ordenado. </div>
+            <div class="def"> <strong>¿Por qué usamos records en Java para DTOs?</strong> Los <em>records</em> son una
+              forma corta de declarar clases inmutables con campos, constructor y métodos básicos (equals, hashCode,
+              toString) generados automáticamente. <strong>Traducción:</strong> menos código, más claridad, menos
+              errores. </div>
+            <div class="def"> <strong>Validaciones:</strong> revisan que los datos que llegan tengan el formato correcto
+              antes de procesarlos. - <span class="tag">@NotBlank</span>: el campo no puede venir vacío ni solo con
+              espacios (ideal para nombre, cédula). - <span class="tag">@Email</span>: obliga a que el texto tenga forma
+              de correo válido (por ejemplo nombre@dominio.com). - Puedes agregar otras como <span
+                class="tag">@Size(min=…)</span>, <span class="tag">@Pattern(regex=…)</span> o <span
+                class="tag">@NotNull</span> según el caso. </div>
+            <div class="def"> <strong>¿Por qué dos DTOs distintos?</strong> <span class="tag">CrearClienteDto</span> es
+              lo que el cliente envía al crear un registro (no incluye id porque aún no existe). <span
+                class="tag">ClienteDto</span> es lo que devolvemos al usuario después de guardar o consultar (incluye el
+              id asignado). </div>
+            <div class="def"> <strong>Buenas prácticas rápidas:</strong> no reutilices entidades JPA como DTOs, separa
+              “lo que entra” de “lo que sale” con DTOs específicos, y valida siempre en el controlador o capa de
+              presentación para proteger la lógica de negocio. </div>
+          </div>
+        </div>
+        <div class="def"><strong>Swagger/OpenAPI:</strong> es la combinación de un estándar (OpenAPI) para describir tu
+          API y una interfaz web (Swagger UI) que se genera automáticamente a partir de esa descripción. ¿Qué te da en
+          la práctica? Una página interactiva donde puedes ver todos los endpoints de tu API, sus parámetros, ejemplos
+          de entradas y salidas, códigos de error y probar las peticiones directamente desde el navegador sin usar
+          herramientas externas. Esto ayuda a estudiantes y equipos a entender rápido “qué hace” cada ruta, reduce
+          malentendidos entre frontend y backend (porque comparten el mismo “contrato” de la API) y acelera las pruebas
+          durante el desarrollo. Normalmente se accede en /swagger-ui.html cuando tienes la dependencia de springdoc
+          instalada.</div>
+      </div>
+    </section>
+
+    <section id="estructura" style="display:none">
+      <h2>7. Estructura del proyecto (carpetas ordenadas)</h2>
+      <div class="card">
+        <p>
+          Esta estructura se planteo despues de ciertas investigaciones y tutoriales de cómo organizan proyectos los
+          equipos profesionales: separamos por <strong>módulos</strong> (dominio, aplicación, infraestructura, API) para
+          mantener límites claros y facilitar el mantenimiento.
+          Debajo verás un planteamiento inicial del entorno para el proyecto de la app veterinaria, cada carpeta con
+          <em>subcarpetas y archivos típicos</em>, mas unas breves explicaciones de que va en cada carpeta.
+        </p>
+
+        <div class="diagram">
+          vete/
+          ├─ pom.xml (POM raíz: declara módulos y versiones comunes)
+          ├─ README.md (Guía del proyecto)
+          ├─ .gitignore (Archivos que no se suben al repo)
+          ├─ docker-compose.yml (Stack local: DB, etc. opcional)
+          ├─ .env.example (Variables de entorno de ejemplo)
+          ├─ vete-domain/ (Módulo de Dominio: negocio puro)
+          │ ├─ pom.xml
+          │ └─ src/
+          │ └─ main/java/com/vete/domain/
+          │ ├─ model/ (Entidades de dominio: sin dependencias de frameworks)
+          │ │ ├─ Cliente.java
+          │ │ ├─ Mascota.java
+          │ │ ├─ Veterinario.java
+          │ │ ├─ Cita.java
+          │ │ ├─ Factura.java
+          │ │ └─ Servicio.java
+          │ ├─ valueobject/ (Value Objects: tipos con reglas propias)
+          │ │ ├─ Cedula.java
+          │ │ ├─ Email.java
+          │ │ └─ Dinero.java
+          │ ├─ repository/ (Puertos del dominio: interfaces, NO implementaciones)
+          │ │ ├─ ClienteRepository.java
+          │ │ ├─ CitaRepository.java
+          │ │ └─ FacturaRepository.java
+          │ ├─ service/ (Reglas de negocio puras)
+          │ │ ├─ AgendarCitaService.java
+          │ │ └─ FacturacionService.java
+          │ └─ exception/ (Excepciones de negocio)
+          │ ├─ ClienteNoEncontradoException.java
+          │ └─ CitaNoDisponibleException.java
+          │
+          ├─ vete-application/ (Módulo de Aplicación: casos de uso)
+          │ ├─ pom.xml
+          │ └─ src/
+          │ └─ main/java/com/vete/application/
+          │ ├─ usecase/ (Casos de uso orquestan servicios y repos)
+          │ │ ├─ CrearClienteUseCase.java
+          │ │ ├─ AgendarCitaUseCase.java
+          │ │ └─ GenerarFacturaUseCase.java
+          │ ├─ mapper/ (Mapeos entre DTOs y dominio)
+          │ │ ├─ ClienteMapper.java
+          │ │ └─ CitaMapper.java
+          │ └─ port/ (Puertos hacia infraestructura si aplica)
+          │ └─ NotificacionPort.java
+          │
+          ├─ vete-infrastructure/ (Módulo de Infraestructura: adaptadores)
+          │ ├─ pom.xml
+          │ └─ src/
+          │ ├─ main/java/com/vete/infrastructure/
+          │ │ ├─ persistence/ (Persistencia: JPA/Hibernate)
+          │ │ │ ├─ entity/ (Entidades JPA: anotadas para BD)
+          │ │ │ │ ├─ ClienteEntity.java
+          │ │ │ │ ├─ MascotaEntity.java
+          │ │ │ │ ├─ VeterinarioEntity.java
+          │ │ │ │ ├─ CitaEntity.java
+          │ │ │ │ ├─ FacturaEntity.java
+          │ │ │ │ └─ FacturaItemEntity.java
+          │ │ │ ├─ repository/ (Repos JPA: implementaciones de puertos)
+          │ │ │ │ ├─ ClienteJpaRepository.java
+          │ │ │ │ ├─ CitaJpaRepository.java
+          │ │ │ │ └─ FacturaJpaRepository.java
+          │ │ │ └─ adapter/ (Adaptadores que conectan dominio con JPA)
+          │ │ │ ├─ ClienteRepositoryAdapter.java
+          │ │ │ └─ CitaRepositoryAdapter.java
+          │ │ ├─ config/ (Configuraciones de Spring)
+          │ │ │ ├─ JpaConfig.java
+          │ │ │ └─ SecurityConfig.java
+          │ │ ├─ security/ (Seguridad: filtros, detalles de usuario)
+          │ │ │ ├─ JwtFilter.java
+          │ │ │ └─ CustomUserDetailsService.java
+          │ │ ├─ integration/ (Integraciones externas: mail, pagos, etc.)
+          │ │ │ ├─ EmailSenderClient.java
+          │ │ │ └─ PaymentGatewayClient.java
+          │ │ └─ mapper/ (Mapeos entre entidades JPA y dominio)
+          │ │ └─ ClienteEntityMapper.java
+          │ └─ main/resources/
+          │ ├─ application.yml (Perfiles y configuración de infraestructura)
+          │ └─ db/migration/ (Migraciones Flyway)
+          │ ├─ V1__init_schema.sql
+          │ └─ V2__indices_y_constraints.sql
+          │
+          └─ vete-api/ (Módulo de API: capa web)
+          ├─ pom.xml
+          └─ src/
+          ├─ main/java/com/vete/api/
+          │ ├─ controller/ (Controladores REST)
+          │ │ ├─ ClienteController.java
+          │ │ ├─ CitaController.java
+          │ │ └─ FacturaController.java
+          │ ├─ dto/ (DTOs de entrada/salida)
+          │ │ ├─ CrearClienteDto.java
+          │ │ ├─ ClienteDto.java
+          │ │ ├─ CrearCitaDto.java
+          │ │ └─ CitaDto.java
+          │ ├─ handler/ (Manejo de errores y validaciones)
+          │ │ └─ GlobalExceptionHandler.java
+          │ ├─ config/ (Config propia de la API)
+          │ │ └─ OpenApiConfig.java
+          │ └─ VeteApiApplication.java (Clase main del módulo API si se ejecuta separada)
+          └─ main/resources/
+          ├─ application.yml (Props específicas de la API si aplica)
+          └─ static/ (Archivos estáticos, opcional)
+        </div>
+
+        <div class="def">
+          <strong>Cómo pensar en módulos:</strong><br />
+          - <em>Dominio</em>: las reglas del negocio en limpio (no sabe de base de datos ni HTTP).<br />
+          - <em>Aplicación</em>: orquesta casos de uso (coordina dominio y puertos).<br />
+          - <em>Infraestructura</em>: detalles técnicos (bases de datos, seguridad, integraciones).<br />
+          - <em>API</em>: lo que habla con el mundo exterior (HTTP/REST, DTOs, validación).
+        </div>
+
+        <div class="def">
+          <strong>¿Qué pongo exactamente en cada carpeta?</strong><br />
+          - <em>domain/model</em>: clases que representan conceptos del negocio (Cliente, Cita).<br />
+          - <em>domain/valueobject</em>: tipos con validaciones propias (Email, Cedula, Dinero).<br />
+          - <em>domain/repository</em>: interfaces que dicen “qué” necesitamos de la BD (buscar cliente, guardar
+          cita).<br />
+          - <em>application/usecase</em>: clases que ejecutan un caso de uso completo (crear cliente, agendar
+          cita).<br />
+          - <em>infrastructure/persistence/entity</em>: entidades JPA (con anotaciones @Entity, @Table...).<br />
+          - <em>infrastructure/persistence/repository</em>: interfaces Spring Data (extends JpaRepository...).<br />
+          - <em>infrastructure/persistence/adapter</em>: puente entre repos del dominio e implementación JPA.<br />
+          - <em>api/dto</em>: objetos para entrada/salida de la API; nunca expongas entidades JPA.<br />
+          - <em>api/controller</em>: endpoints REST (GET/POST/PUT/DELETE) que llaman a los casos de uso.<br />
+          - <em>api/handler</em>: manejo de errores y validaciones para respuestas limpias.
+        </div>
+
+        <div class="def">
+          <strong>Buenas prácticas de estructura (aplican a casi cualquier proyecto Java/Spring):</strong>
+          <ul>
+            <li>Separar dominios en módulos o paquetes evita “mezcla” entre reglas de negocio y detalles técnicos.</li>
+            <li>Usar DTOs para la API: protege tu modelo interno y te permite evolucionarlo sin romper clientes.</li>
+            <li>Definir interfaces de repositorio en <em>domain</em> y sus implementaciones en <em>infrastructure</em>
+              mantiene el dominio limpio.</li>
+            <li>Centralizar migraciones en <em>infrastructure/resources/db/migration</em> con Flyway/Liquibase.</li>
+            <li>Un <em>GlobalExceptionHandler</em> en la API asegura respuestas consistentes de error.</li>
+            <li>Mantener un <em>README.md</em> con cómo correr el proyecto y perfiles de Spring.</li>
+            <li>Usar <em>.env.example</em> para documentar variables de entorno sin exponer credenciales reales.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Cómo se conecta todo (se plantea un flujo típico y muy usado en proyectos profesionales)</h3>
+          <ol>
+            <li>El <strong>Controller</strong> recibe una petición HTTP con un DTO.</li>
+            <li>Valida el DTO y llama a un <strong>Use Case</strong> en <em>application</em>.</li>
+            <li>El Use Case usa el <strong>Dominio</strong> (entidades/servicios) para aplicar reglas.</li>
+            <li>Cuando necesita datos, llama a un <strong>Repositorio del Dominio</strong> (interface).</li>
+            <li>Un <strong>Adapter</strong> en <em>infrastructure</em> implementa ese repositorio usando <em>Spring Data
+                JPA</em> y mapea a entidades JPA.</li>
+            <li>Se persiste en la BD, se regresa el resultado al Use Case, luego al Controller y se responde con un DTO.
+            </li>
+          </ol>
+          <div class="def"> <strong>Nota (palabras clave mencionadas en el flujo, que depronto no se comprendan a nivel
+              general como ayuda o plus pensando en que todo sea comprensible tanto para ya profesionales como para
+              novatos o estudiantes):</strong><br /> - <strong>DTO</strong>: “Data
+            Transfer Object”. Objeto simple para enviar/recibir datos por la API. No contiene lógica, solo campos.<br />
+            - <strong>Controller</strong>: clase que expone endpoints HTTP (REST). Recibe requests, valida y delega el
+            trabajo.<br /> - <strong>Use Case</strong>: caso de uso. Coordina pasos del negocio para cumplir una acción
+            (crear cliente, agendar cita).<br /> - <strong>Dominio</strong>: el corazón del negocio (entidades y reglas)
+            sin depender de la base de datos ni de HTTP.<br /> - <strong>Repositorio (del Dominio)</strong>: interfaz
+            que define qué operaciones de datos necesita el dominio (guardar, buscar), sin decir cómo se
+            implementan.<br /> - <strong>Adapter</strong>: “traductor” que implementa el repositorio del dominio usando
+            una tecnología concreta (por ejemplo, JPA).<br /> - <strong>JPA</strong>: “Java Persistence API”. Estándar
+            para mapear objetos Java a tablas de base de datos y hacer CRUD sin escribir SQL puro.<br /> -
+            <strong>Spring Data JPA</strong>: librería de Spring que simplifica JPA (crea repositorios e
+            implementaciones con muy poco código).<br /> - <strong>Entidad JPA</strong>: clase anotada con @Entity que
+            representa una tabla en la base de datos.<br /> - <strong>BD</strong>: base de datos. Lugar donde se guardan
+            los datos de forma persistente.<br /> - <strong>API</strong>: interfaz para que otros sistemas o el frontend
+            se comuniquen con tu aplicación vía HTTP (JSON, etc.).<br /> - <strong>Validación</strong>: reglas para
+            asegurar que los datos que entran tienen el formato y valores correctos antes de procesarlos.
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Ejemplo mínimo de archivos clave</h3>
+          <div class="code"> // Módulo: vete-domain // Paquete: com.vete.domain.repository package
+            com.vete.domain.repository;
+            import java.util.Optional;
+            import com.vete.domain.model.Cliente;
+
+            // Repositorio del Dominio: define QUÉ operaciones necesita el dominio.
+            // No depende de JPA ni de Spring. Es una interfaz pura.
+            public interface ClienteRepository {
+            Optional<Cliente> findByCedula(String cedula);
+              Cliente save(Cliente cliente);
+              }
+
+              // -------------------------------------------------------------
+
+              // Módulo: vete-infrastructure
+              // Paquete: com.vete.infrastructure.persistence.repository
+              package com.vete.infrastructure.persistence.repository;
+
+              import java.util.Optional;
+              import org.springframework.data.jpa.repository.JpaRepository;
+              import com.vete.infrastructure.persistence.entity.ClienteEntity;
+
+              // Repositorio JPA: implementado por Spring Data JPA.
+              // Aquí ya hablamos en términos de entidades JPA (ClienteEntity).
+              public interface ClienteJpaRepository extends JpaRepository<ClienteEntity, Long> {
+                Optional<ClienteEntity> findByCedula(String cedula);
+                  }
+
+                  // -------------------------------------------------------------
+
+                  // Módulo: vete-infrastructure
+                  // Paquete: com.vete.infrastructure.persistence.adapter
+                  package com.vete.infrastructure.persistence.adapter;
+
+                  import java.util.Optional;
+                  import org.springframework.stereotype.Component;
+                  import lombok.RequiredArgsConstructor;
+
+                  import com.vete.domain.repository.ClienteRepository; // Puerto del dominio
+                  import com.vete.domain.model.Cliente; // Modelo del dominio
+                  import com.vete.infrastructure.persistence.repository.ClienteJpaRepository; // Repo JPA
+                  import com.vete.infrastructure.persistence.entity.ClienteEntity; // Entidad JPA
+                  import com.vete.infrastructure.mapper.ClienteEntityMapper; // Mapper (infra): Entity <-> Domain
+
+                    // Adapter: traduce entre el Dominio y JPA.
+                    // Implementa el puerto del dominio usando una tecnología concreta (Spring Data JPA).
+                    @Component
+                    @RequiredArgsConstructor
+                    public class ClienteRepositoryAdapter implements ClienteRepository {
+
+                    private final ClienteJpaRepository jpa;
+                    private final ClienteEntityMapper mapper;
+
+                    @Override
+                    public Optional<Cliente> findByCedula(String cedula) {
+                      // 1) Consultamos la BD con el repositorio JPA (retorna Entity)
+                      // 2) Mapeamos a modelo de Dominio antes de devolverlo al caso de uso
+                      return jpa.findByCedula(cedula).map(mapper::toDomain);
+                      }
+
+                      @Override
+                      public Cliente save(Cliente cliente) {
+                      // 1) Mapeamos del Dominio -> Entity JPA
+                      // 2) Guardamos con JPA
+                      // 3) Devolvemos el resultado mapeado a Dominio (por si cambia el ID u otros campos)
+                      ClienteEntity saved = jpa.save(mapper.toEntity(cliente));
+                      return mapper.toDomain(saved);
+                      }
+                      }
+
+          </div>
+          <p class="muted"> Así el Dominio no depende de JPA ni de Spring; solo conoce interfaces. La Infraestructura se
+            encarga de los detalles técnicos, mapeando entre <em>modelo de dominio</em> y <em>entidades JPA</em>. Este
+            patrón mantiene el código limpio y fácil de probar. </p>
+        </div>
+
+        <div class="tip">
+          <strong> Nota de ayuda: </strong> Si eres novato o estudiante algo inexperto : empieza copiando esta estructura tal cual. A medida que crezcas, ajustarás nombres y capas
+          según tu proyecto. Lo importante es que cada cosa tenga su lugar y que no mezcles reglas de negocio con
+          detalles técnicos.
+        </div>
+      </div>
+    </section>
+
+    <section id="adrs" style="display:none">
+      <h2>8. Decisiones de arquitectura (ADRs, explicado corto)</h2>
+      <div class="card">
+        <details open>
+          <summary>ADR-001: Elegimos Spring Boot 3 + Java 17</summary>
+          <div class="kv">
+            <div>Fecha</div>
+            <div>2025-10-10</div>
+            <div>Estado</div>
+            <div><span class="badge ok">Aceptada</span></div>
+            <div>Contexto</div>
+            <div>Queremos avanzar rápido y con buenas prácticas ya probadas.</div>
+            <div>Decisión</div>
+            <div>Usar Spring Boot con Web, JPA, Validación y Seguridad.</div>
+            <div>Consecuencia</div>
+            <div>Menos código repetido, comunidad grande y despliegue sencillo.</div>
+          </div>
+        </details>
+        <details>
+          <summary>ADR-002: PostgreSQL en producción y H2 en desarrollo</summary>
+          <div class="kv">
+            <div>Contexto</div>
+            <div>Necesitamos una base estable en producción y algo fácil para desarrollar.</div>
+            <div>Decisión</div>
+            <div>PostgreSQL para “lo real” y H2 para trabajar rápido en local.</div>
+            <div>Consecuencia</div>
+            <div>Desarrollo veloz sin sacrificar seriedad en producción.</div>
+          </div>
+        </details>
+        <details>
+          <summary>ADR-003: Repositorios con Spring Data JPA</summary>
+          <div class="kv">
+            <div>Contexto</div>
+            <div>No queremos escribir todo el acceso a la BD a mano.</div>
+            <div>Decisión</div>
+            <div>Interfaces JpaRepository por entidad.</div>
+            <div>Consecuencia</div>
+            <div>Ahorro de tiempo, código más limpio y fácil de probar.</div>
+          </div>
+        </details>
+        <details>
+          <summary>ADR-004: Usar DTOs y validación en la frontera</summary>
+          <div class="kv">
+            <div>Contexto</div>
+            <div>Queremos proteger el “corazón” del sistema de datos incorrectos.</div>
+            <div>Decisión</div>
+            <div>Validar entradas/salidas y mapear a objetos simples (DTOs).</div>
+            <div>Consecuencia</div>
+            <div>Contratos claros y menos errores cruzando capas.</div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="calidad" style="display:none">
+      <h2>9. Calidad, rendimiento y seguridad (planteamiento inicial de lo que mínimamente debemos cubrir)</h2>
+      <div class="card">
+        <div class="grid cols-3">
+          <div class="card">
+            <h3>Rendimiento</h3>
+            <ul>
+              <li>Listados grandes con paginación (para no traer miles de registros de una).</li>
+              <li>Crear índices en campos que se buscan mucho (cédula, fecha de cita).</li>
+              <li>Caché opcional para catálogos que casi no cambian.</li>
+            </ul>
+          </div>
+          <div class="card"> <h3>Seguridad</h3> <ul> <li> Inicio de sesión con tokens (<strong>JWT</strong>) y roles: <code>ADMIN</code>, <code>VET</code>, <code>AUX</code>, <code>CLIENTE</code>. <br/> <small> JWT: al iniciar sesión, el servidor entrega un “pase digital” firmado que el cliente envía en cada petición. El servidor verifica la firma para saber quién eres y qué puedes hacer sin guardar sesión en memoria. </small> </li> <li> Contraseñas guardadas con <strong>BCrypt</strong> (encriptadas, no en texto plano). <br/> <small> BCrypt: algoritmo para “hashear” contraseñas. No guarda la contraseña real, guarda un hash irreversible con sal. Si roban la base, no pueden ver tus contraseñas. </small> </li> <li> Auditoría básica: quién creó/cambió y cuándo. <br/> <small> Guardar campos como creadoPor, creadoEn, actualizadoPor, actualizadoEn. Útil para trazabilidad y seguridad. </small> </li> </ul> </div> <div class="card"> <h3>Mantenimiento</h3> <ul> <li> Pruebas unitarias y de repositorios usando <strong>H2</strong>. <br/> <small> H2: base de datos en memoria para pruebas rápidas. Permite validar consultas y repositorios sin depender de la BD real. </small> </li> <li> Nombres claros y consistentes en paquetes y clases. <br/> <small> Facilita encontrar código y reduce errores. Usa convenciones estables: controller, service, repository, dto, etc. </small> </li> <li> <strong>ADRs</strong> guardadas en el repositorio (para recordar por qué decidimos algo). <br/> <small> ADR: “Architecture Decision Record”. Un archivo corto donde documentas una decisión técnica (qué problema resolviste, opciones evaluadas y la razón de la elección). </small> </li> </ul> </div> <div class="def"><strong>Índice:</strong> una “guía rápida” en la BD que acelera búsquedas en columnas muy consultadas (por ejemplo, cédula, fecha). Sin índice, la BD revisa fila por fila.</div> <div class="def"><strong>JWT:</strong> “JSON Web Token”. Token firmado que el servidor emite tras el login y el cliente envía en cada request para autenticación/autorización.</div> <div class="def"><strong>BCrypt:</strong> método seguro para almacenar contraseñas mediante hash con sal y costo (difícil de revertir o forzar).</div> <div class="def"><strong>H2:</strong> base de datos en memoria, ligera y rápida, ideal para pruebas automatizadas.</div> <div class="def"><strong>ADR:</strong> registro breve de una decisión de arquitectura: contexto, decisión, alternativas y consecuencias.</div> <div class="def"><strong>Roles:</strong> etiquetas que definen permisos. Ejemplo: ADMIN (todo), VET (gestión clínica), AUX (apoyo), CLIENTE (acceso propio).</div>
+      </div>
+    </section>
+
+    <section id="checklist" style="display:none">
+      <h2>10. Checklist de la Entrega 1</h2>
+      <div class="card">
+        <ul class="checklist">
+          <li>Arquitectura por capas definida y explicada en lenguaje claro.</li>
+          <li>Entidades de dominio principales listadas con reglas básicas.</li>
+          <li>Repositorios por entidad ejemplificados con Spring Data JPA.</li>
+          <li>Conexión a la base de datos con perfiles dev/prod configurada.</li>
+          <li>Estructura del proyecto propuesta por módulos.</li>
+          <li>Capa de presentación (API REST) con controladores y DTOs de ejemplo.</li>
+          <li>Decisiones importantes registradas (ADRs) y razones simples.</li>
+        </ul>
+        <p class="foot">Documentación API con Swagger: /swagger-ui.html · Control de versiones: Git + GitHub.</p>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>
